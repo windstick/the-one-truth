@@ -1,28 +1,28 @@
 create table game_user
-	( user_ID			numeric(20, 0),
+    ( user_ID			numeric(20, 0),
       pass_word			varchar(15) not null,
       user_name			varchar(20) not null unique,
       remark		 	varchar(20) default 'ordinary',
       user_level		int default 1,
-      email				varchar(50),
+      email			varchar(50),
       register_date		date not null,
-      last_login_time   timestamp(0),
+      last_login_time   	timestamp(0),
       primary key (user_ID),
       check (user_level > 0) );
 
 create table script
-	( script_ID			numeric(20, 0),
-	  title				varchar(50) not null,
+    ( script_ID			numeric(20, 0),
+      title			varchar(50) not null,
       description		varchar(500) not null,
-      truth				varchar(100) not null,
+      truth			varchar(100) not null,
       primary key (script_ID),
       unique (title) );
 
 create table game_role
-	( role_ID			numeric(20, 0),
-	  script_title		varchar(50) not null,
-      role_name			varchar(50) not null,
-      task				varchar(200) not null,
+    ( role_ID		numeric(20, 0),
+      script_title	varchar(50) not null,
+      role_name		varchar(50) not null,
+      task		varchar(200) not null,
       role_description	varchar(500) not null,
       primary key (role_ID),
       foreign key (script_title) references script(title) 
@@ -30,9 +30,9 @@ create table game_role
 		on delete cascade );
 
 create table game_clue
-	( clue_ID			numeric(20, 0),
+    ( clue_ID			numeric(20, 0),
       script_title		varchar(50) not null,
-      clue_description	varchar(500) not null,
+      clue_description		varchar(500) not null,
       primary key (clue_ID),
       foreign key (script_title) references script(title) 
 		on update cascade
@@ -40,9 +40,9 @@ create table game_clue
 
 
 create table game_room
-	( room_ID			numeric(20, 0),
-      size				int,
-      stage				varchar(50),
+    ( room_ID			numeric(20, 0),
+      size			int,
+      stage			varchar(50),
       script_title		varchar(50),
       primary key (room_ID),
       foreign key (script_title) references script(title) 
@@ -50,18 +50,18 @@ create table game_room
 		on delete cascade );
 
 create table player
-	( player_ID			numeric(20, 0),
-	  user_id			numeric(20, 0),
+    ( player_ID		numeric(20, 0),
+      user_id		numeric(20, 0),
       room_id           numeric(20, 0),
-	  role_id			numeric(20, 0),
+      role_id		numeric(20, 0),
       primary key (player_ID),
       foreign key (user_id) references game_user(user_ID) 
 		on update cascade
 		on delete cascade,
-	  foreign key (room_id) references game_room(room_ID) 
+      foreign key (room_id) references game_room(room_ID) 
 		on update cascade
 		on delete cascade,
-	  foreign key (role_id) references game_role(role_ID) 
+      foreign key (role_id) references game_role(role_ID) 
 		on update cascade
 		on delete cascade );
 
