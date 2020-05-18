@@ -10,10 +10,8 @@ class User(models.Model):
     group_id = models.IntegerField()
     friend_list = models.CharField(max_length=1000)
     friend_num = models.IntegerField()
-
     class Meta:
         db_table="User"
-
     def __unicode__(self):
         return self.name
 
@@ -22,8 +20,10 @@ class script(models.Model):
     title = models.CharField(max_length=50,primary_key=True,default='')
     script_ID = models.DecimalField(max_digits=20,decimal_places=0,default='')
     add_time = models.DateTimeField(auto_now=True)
+    player_num = models.IntegerField()
+    muder_role_id = models.ForeignKey(game_role, on_delete = models.PROTECT)
     truth = models.CharField(max_length=100,default='')
-    description = models.CharField(max_length=500,default='None')
+    description = models.CharField(max_length=5000,default='None')
     def __unicode__(self):
         return self.title
 
@@ -43,23 +43,33 @@ class game_user(models.Model):
 class game_clue(models.Model):
     clue_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True)
     script_title = models.ForeignKey(script,on_delete=models.PROTECT)
-    clue_description = models.CharField(max_length=500)
+    clue_description = models.CharField(max_length=5000)
     def __unicode__(self):
         return self.clue_ID
+
 class game_role(models.Model):
     role_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True)
     script_title = models.ForeignKey(script,on_delete=models.PROTECT)
     role_name = models.CharField(max_length=50)
     task = models.CharField(max_length=200)
-    role_description = models.CharField(max_length=500)
+    role_description = models.CharField(max_length=5000)
 
 class game_room(models.Model):
     room_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True)
     size = models.IntegerField()
     stage = models.CharField(max_length=50)
     script_title = models.ForeignKey(script,on_delete=models.PROTECT)
+
 class player(models.Model):
     player_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True)
     user_id = models.ForeignKey(game_user,on_delete=models.PROTECT)
-    room_id = models.ForeignKey(game_room,on_delete=models.PROTECT)
+    room_id = models.ForeignKey(game_room,on_delete=CASCADE)
     role_id = models.ForeignKey(game_role,on_delete=models.PROTECT)
+    ready_1 = models.IntegerField(default=0)
+    ready_2 = models.IntegerField(default=0)
+    ready_3 = models.IntegerField(default=0)
+
+class player_clue(models.Model):
+    player_ID = models.ForeignKey(player,on_delete = models.CASCADE)
+    clue_ID = models.ForeignKey(game_clue,on_delete = models.SET_NULL)
+    room_ID = models.ForeignKey(game_room,on_delete = models.CASCADE)
