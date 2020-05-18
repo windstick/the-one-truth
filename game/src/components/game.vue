@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div class="Game">
     <el-container>
   <el-header>THE ONE TRUTH</el-header>
   <el-main>
@@ -45,12 +45,13 @@
 </el-footer>
 </el-main> 
 </el-container> 
+<el-button @click="gotest()"  type="primary">gotest</el-button>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Room',
+  name: 'Game',
   data() {
     return {
       count: 0,
@@ -118,6 +119,9 @@ export default {
       this.clues[this.selectedRole].show=1;
       this.movementPoint--;
       }
+    },
+    gotest:function(){
+      this.$router.push({name:'test',params:{mytimeline:this.timeline}})
     }
   },
   mounted () {
