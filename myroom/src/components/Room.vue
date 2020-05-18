@@ -1,12 +1,56 @@
 <template>
-  <div class="app">
-    <router-view/>
+  <div class="hello">
+    <el-container>
+  <el-header>THE ONE TRUTH</el-header>
+  <el-main>
+    <el-row>
+  <el-col :span="4"><div v-bind:class="{'grid-content bg-purple-dark':dark[0],'grid-content bg-purple':light[0]}">剧本环节</div></el-col>
+  <el-col :span="4"><div v-bind:class="{'grid-content bg-purple-dark':dark[1],'grid-content bg-purple':light[1]}">介绍环节</div></el-col>
+  <el-col :span="4"><div v-bind:class="{'grid-content bg-purple-dark':dark[2],'grid-content bg-purple':light[2]}">线索环节</div></el-col>
+  <el-col :span="4"><div v-bind:class="{'grid-content bg-purple-dark':dark[3],'grid-content bg-purple':light[3]}">讨论环节</div></el-col>
+  <el-col :span="4"><div v-bind:class="{'grid-content bg-purple-dark':dark[4],'grid-content bg-purple':light[4]}">投票环节</div></el-col>
+  <el-col :span="4"><div v-bind:class="{'grid-content bg-purple-dark':dark[5],'grid-content bg-purple':light[5]}">真相环节</div></el-col>
+</el-row>
+<div v-if= "stage==4" class='grid-content bg-red'>
+  <el-row>
+    请选出你认为的凶手：
+    <el-button  v-for= 'role in roles' @click= 'selectedCriminal=role.id'>{{role.name}}</el-button>
+  </el-row>
+</div>
+    <el-row>
+      <el-col :span="12">
+        <div class='grid-content bg-purple'>
+          <el-radio v-model="scriptText" label="0">背景故事</el-radio>
+          <el-radio v-model="scriptText" label="1">时间线</el-radio>
+          <el-radio v-model="scriptText" label="2">任务</el-radio>
+          <el-radio v-model="scriptText" label="3" v-if= 'stage==5'>真相</el-radio>
+        </div>
+        <div class='grid-content2 bg-purple' v-if= "scriptText==0">{{background}}</div>
+        <div class='grid-content2 bg-purple' v-if= "scriptText==1">{{timeline}}</div>
+        <div class='grid-content2 bg-purple' v-if= "scriptText==2">{{task}}</div>
+        <div class='grid-content2 bg-purple' v-if= "scriptText==3">{{truth}}</div>
+      </el-col>
+      <el-col :span="12">
+        <div v-if= 'stage>1'> 
+        <div class='grid-content bg-purple' >
+        <el-radio v-for= 'role in roles' v-model= 'selectedRole' v-bind:label= 'role.id'>{{role.name}}</el-radio>
+        <el-button type='info' @click='searchClue()'>搜索| {{movementPoint}}/2</el-button>
+        </div>
+        <div v-for= 'clue in clues' class='grid-content2 bg-purple' v-if= "clue.id==selectedRole && clue.show==1" >{{clue.text}}</div>        
+        </div>
+      </el-col>
+    </el-row>
+<el-footer>
+<el-button @click="myready()"  type="primary">准备就绪</el-button>
+</el-footer>
+</el-main> 
+</el-container> 
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App',
+  name: 'Room',
   data() {
     return {
       count: 0,
@@ -167,3 +211,4 @@ export default {
     line-height: 320px;
   }
 </style>
+
