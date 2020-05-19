@@ -46,6 +46,7 @@
 </el-main> 
 </el-container> 
 <el-button @click="gotest()"  type="primary">gotest</el-button>
+<p>script_id:{{scriptid}},player:{{player}}</p>
   </div>
 </template>
 
@@ -60,6 +61,8 @@ export default {
       light:[0,1,1,1,1,1],
       /* 以下是剧情文本相关的数据 */
       scriptText:0,
+      scriptid:0,
+      player:0,
       background: null,
       timeline: '这是时间线。',
       task: '这是任务。',
@@ -121,7 +124,7 @@ export default {
       }
     },
     gotest:function(){
-      this.$router.push({name:'test',params:{mytimeline:this.timeline}})
+      this.$router.push({name:'test',params:{mytimeline:this.timeline,mytask:this.task}})
     }
   },
   mounted () {
@@ -132,6 +135,11 @@ export default {
       .catch(function (error) { // 请求失败处理
         console.log(error);
       });
+  },
+  created(){
+      console.log(this.$route.params)
+      this.scriptid=this.$route.params.script_id
+      this.player=this.$route.params.player
   }
 }
 </script>
