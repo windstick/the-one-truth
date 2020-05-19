@@ -127,7 +127,7 @@ export default {
   mounted () {
     const  _this = this
     this.$axios
-      .get('https://www.runoob.com/try/ajax/json_demo.json')
+      .post('http://xx.com/api/start_game')
       .then(response => (this.background = response))
       .catch(function (error) { // 请求失败处理
         console.log(error);
