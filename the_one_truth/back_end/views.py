@@ -4,8 +4,10 @@ from django.http import JsonResponse
 import json
 
 from django.utils.timezone import now
-from . import models
+import sys
+print(sys.path)
 
+from . import models
 
 # Create your views here.
 
