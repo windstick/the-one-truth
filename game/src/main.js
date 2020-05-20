@@ -10,11 +10,13 @@ import VueAxios from 'vue-axios'
 
 import 'element-ui/lib/theme-chalk/index.css'
 
-Vue.config.productionTip = false
-Vue.prototype.$axios = axios;
+
 Vue.use(ElementUI);
 Vue.use(VueAxios, axios)
-
+Vue.config.productionTip = false
+Vue.prototype.$axios = axios;
+axios.defaults.baseURL = '/api'
+axios.defaults.headers.post['Content-Type'] = 'application/json';
 /* eslint-disable no-new */
 new Vue({
     el: '#app',

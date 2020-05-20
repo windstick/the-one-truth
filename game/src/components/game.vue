@@ -130,7 +130,7 @@ export default {
   mounted () {
     const  _this = this
     this.$axios
-      .post('http://xx.com/api/start_game')
+      .get('/site/info.json')
       .then(response => (this.background = response))
       .catch(function (error) { // 请求失败处理
         console.log(error);
