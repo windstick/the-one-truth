@@ -9,6 +9,9 @@ const LoggedOut = () => import('../views/PagesInHome/LoggedOut.vue')
 
 const Game = () => import('../views/Game.vue')
 
+const CreateOrJoin = () => import('../components/CreateOrJoinRoom.vue')
+const SelectScript = () => import('../components/SelectScript.vue')
+
 Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
@@ -36,7 +39,23 @@ const routes: Array<RouteConfig> = [
       },
       {
         path: 'room',
-        component: room
+        component: room,
+        children: [
+          {
+            path: '',
+            redirect: 'createorjoin'
+          },
+          {
+            name: 'CreateOrJoin',
+            path: 'createorjoin',
+            component: CreateOrJoin
+          },
+          {
+            name: 'SelectScript',
+            path: 'selectscript',
+            component: SelectScript
+          }
+        ]
       },
       {
         path: 'loggedout',

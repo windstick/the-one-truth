@@ -8,7 +8,7 @@
       <div v-if="!User.logIn" class="banner_item">注册</div>
     </Banner>
 
-    <router-view></router-view>
+    <router-view :User="User"></router-view>
   </div>
 </template>
 
@@ -19,22 +19,16 @@ import Banner from '../components/Banner'
 export default {
   name: 'Home',
   components: {
-    Banner,
+    Banner
   },
   data(){
     return {
-      Room: {
-        room_id: 0,
-        player_list: [],
-        size: 1,
-        chosen_script: 0,
-        created: 0
-      },
-      User: {
-        logIn: false,
-        user_id: 0,
-        name: "",
-        passwd: ""
+      User:  {
+          logIn: true,
+          user_id: 0,
+          name: "user0",
+          passwd: "",
+          friend_list: ['user1', 'user2', 'user3', 'user4']
       }
     }
   },

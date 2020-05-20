@@ -12,11 +12,14 @@ export default {
   beforeMount()
   {
     if(this.$parent.User.logIn)
-      this.$router.push('/home/room')
+      this.$router.replace('/home/room')
   }
 }
 </script>
 
 <style>
-
+  h1 {
+    text-align: center;
+    padding: 20px 0 20px 0;
+  }
 </style>
