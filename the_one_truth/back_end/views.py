@@ -4,13 +4,23 @@ from django.http import JsonResponse
 import json
 
 from django.utils.timezone import now
+import sys
+
+print(sys.path)
+
 from . import models
 
 
 # Create your views here.
 
+
 def index(request):
     return HttpResponse('Hello, world!')
+
+
+def test(request):
+    msg = {"func": 'test'}
+    return JsonResponse(msg)
 
 
 def register_handler(request):
@@ -18,6 +28,7 @@ def register_handler(request):
         response = {}
         error = None
         username = request.POST.get("username", None)
+        print(username)
         password = request.POST.get("password", None)
         email = request.POST.get("email", None)
         user = models.User.objects.filter(name=username)
@@ -36,7 +47,7 @@ def register_handler(request):
                 'reg_time': now_time,
                 "last_login_time": 0,
             }
-            response[data] = data
+            response['data'] = data
         else:
             response['error_num'] = 1
             response['msg'] = error
@@ -49,7 +60,7 @@ def login_handler(request):
         error = None
         username = request.POST.get("username", None)
         password = request.POST.get("password", None)
-        user = models.User.objects.filter(name=username)
+        user = models.User.objects.filter(name=username).first()
         if not user:
             error = 'No such user.'
         else:
@@ -146,3 +157,145 @@ def list2txt(friend_list):
         txt += item
         txt += "$$"
     return txt
+
+
+def init_room(request):
+    if request.method == 'POST':
+        response = {}
+        error = None
+        req = json.loads(request.body)
+        num_person = req['num_person']
+        room_name = req['room_name']
+        uid = req['user_id']
+        room_id = 0
+        for i in range(1, 100):
+            room = models.game_room.objects.filter(room_ID=i).first()
+            if not room:
+                room = models.game_room.create(room_ID=i, size=num_person, stage=0, script_title=None)
+                room_id = i
+                break
+        if error is None:
+            script = models.script.objects.filter(player_num=num_person)
+            script_name = None
+            for sc in script:
+                script_name.append(sc.tittle)
+            response['error_code'] = 0
+            data = {
+                "room_id": room_id,
+                "script_to_select": script_name
+            }
+            response['data'] = data
+        else:
+            response['error_code'] = 1
+            response['msg'] = error
+        return JsonResponse(response)
+
+
+def enter_room(request):
+    if request.method == 'POST':
+        response = {}
+        error = None
+        req = json.loads(request.body)
+        username = req['username']
+        room_id = req['room_id']
+        user=models.game_user.objects.filter(uesr_name=username).first()
+        player=models.player.objects.filter(user_id=user.user_id).first()
+        player.room_id=room_id
+        player.save()
+        player_list = models.player.objects.filter(room_id=room_id)
+        player_name_list = None
+        room = models.game_room.objects.filter(room_id=room_id).first()
+        start = False
+        script_id = 0
+        if room.stage == 1:
+            start = True
+            script_id = room.script_id
+        for player in player_list:
+            player_name_list.append(player.user_id)
+        if error is None:
+            response['error_code'] = 0
+            data = {
+                "player_list": player_name_list,
+                "start": start,
+                "script_id": script_id
+            }
+            response['data'] = data
+        else:
+            response['error_code'] = 1
+            response['msg'] = error
+        return JsonResponse(response)
+
+
+def room_owner_choose_script(request):
+    if request.method == 'POST':
+        response = {}
+        error = None
+        req = json.loads(request.body)
+        room_id = req['room_id']
+        script_id = req['script_id']
+        room = models.game_room.objects.filter(room_id=room_id).first()
+        room.script_id = script_id
+        room.save()
+        if error is None:
+            response['error_code'] = 0
+        else:
+            response['error_code'] = 1
+            response['msg'] = error
+        return JsonResponse(response)
+
+
+def start_game(request):
+    if request.method == 'POST':
+        response = {}
+        error = None
+        req = json.loads(request.body)
+        room_id = req['room_id']
+        script_id = req['script_id']
+        script=models.script.objects.filter(script_id=script_id).first()
+        room=models.game_room.objects.filter(room_id=room_id).first()
+        role_list=models.game_role.objects.filter(script_id=script_id)
+        truth=script.truth
+        murder_id=script.murder_id
+        role_id=None
+        role_name=None
+        background=None
+        timeline=None
+        task=None
+        for role in role_list:
+            role_id.append(role.role_id)
+            role_name.append(role.role_name)
+            background.append(role.background)
+            timeline.append(role.timeline)
+            task.append(role.task)
+        clue_list=models.game_clue.objects.filter(script_id=script_id)
+        c_list=None
+        clue_id=None
+        clue_description=None
+        for clue in clue_list:
+            c_list.append(clue.text)
+            clue_id.append(clue.clue_id)
+            clue_description.append(clue.clue_description)
+        room.stage=1
+        room.script_id=script_id
+        room.save()
+        if error is None:
+            script_tittle = script.title
+            data = {
+                "script_tittle":script_tittle,
+                "role_id":role_id,
+                "role_list":role_name,
+                "background":background,
+                "timeline":timeline,
+                "task":task,
+                "truth":truth,
+                "murder_id":murder_id,
+                "clue_id":clue_id,
+                "clue_list":c_list,
+                "clue_description":clue_description
+            }
+            response['error_code'] = 0
+        else:
+
+            response['error_code'] = 1
+            response['msg'] = error
+        return JsonResponse(response)
