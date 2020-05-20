@@ -8,7 +8,7 @@ class User(models.Model):
     add_time = models.DateTimeField(auto_now=True)
     last_login_time = models.DateTimeField(auto_now=True)
     group_id = models.IntegerField(null = True)
-    friend_list = models.CharField(max_length=1000)
+    friend_list = models.CharField(max_length=1000, null = True)
     friend_num = models.IntegerField(null = True)
     class Meta:
         db_table="User"

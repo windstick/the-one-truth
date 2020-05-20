@@ -5,7 +5,6 @@ import json
 
 from django.utils.timezone import now
 import sys
-print(sys.path)
 
 from . import models
 
@@ -19,15 +18,16 @@ def register_handler(request):
     if request.method == 'POST':
         response = {}
         error = None
-        username = request.POST.get("username", None)
-        password = request.POST.get("password", None)
-        email = request.POST.get("email", None)
+        req = json.loads(request.body)
+        username = req['username']
+        password = req['password']
+        email = req['email']
         user = models.User.objects.filter(name=username)
         now_time = now()
         if not user:
             models.User.objects.create(name=username, password=password, email=email,
                                        group_id=2, add_time=now_time, friend_num=0,
-                                       last_login_time=now_time, friend_list=None)
+                                       last_login_time=now_time, friend_list="None")
         else:
             error = 'Username has been registered.'
         if error is None:
@@ -38,7 +38,7 @@ def register_handler(request):
                 'reg_time': now_time,
                 "last_login_time": 0,
             }
-            response[data] = data
+            response['data'] = data
         else:
             response['error_num'] = 1
             response['msg'] = error
