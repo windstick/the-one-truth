@@ -27,7 +27,7 @@ def register_handler(request):
         if not user:
             models.User.objects.create(name=username, password=password, email=email,
                                        group_id=2, add_time=now_time, friend_num=0,
-                                       last_login_time=now_time, friend_list="None")
+                                       last_login_time=now_time, friend_list=None)
         else:
             error = 'Username has been registered.'
         if error is None:
