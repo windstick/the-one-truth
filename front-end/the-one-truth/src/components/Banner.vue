@@ -1,6 +1,6 @@
 <template>
   <div id="banner">
-    <div id="det_div">
+    <div id="det_div" @click="iconClick">
       <img src="../assets/Home/detective.png" id="det_img"/>
       <div>The One Truth</div>
     </div>
@@ -14,6 +14,12 @@ export default {
   name: 'Banner',
   components: {
     
+  },
+  methods: {
+    iconClick()
+    {
+      this.$router.push('/home/loggedout')
+    }
   }
 }
 </script>

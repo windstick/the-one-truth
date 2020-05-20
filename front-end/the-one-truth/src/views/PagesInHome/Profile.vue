@@ -1,15 +1,13 @@
 <template>
   <div>
-    
+    <h1>Profile page</h1>
   </div>
 </template>
 
 <script>
 export default {
-
-  name: 'Script',
+  name: 'Profile',
   components: {
-    
   }
 }
 </script>

@@ -1,11 +1,14 @@
 <template>
   <div id="home">
     <Banner id="banner">
-      <div class="banner_item">剧本</div>
-      <div v-show="logIn" class="banner_item">用户</div>
-      <div v-show="!logIn" class="banner_item">登录</div>
-      <div v-show="!logIn" class="banner_item">注册</div>
+      <div v-show="User.logIn" class="banner_item" @click="roomClick">当前房间</div>
+      <div class="banner_item" @click="scriptsClick">剧本</div>
+      <div v-if="User.logIn" class="banner_item" @click="profileClick">用户</div>
+      <div v-if="!User.logIn" class="banner_item">登录</div>
+      <div v-if="!User.logIn" class="banner_item">注册</div>
     </Banner>
+
+    <router-view></router-view>
   </div>
 </template>
 
@@ -19,8 +22,34 @@ export default {
     Banner,
   },
   data(){
-    return{
-      logIn: false
+    return {
+      Room: {
+        room_id: 0,
+        player_list: [],
+        size: 1,
+        chosen_script: 0,
+        created: 0
+      },
+      User: {
+        logIn: false,
+        user_id: 0,
+        name: "",
+        passwd: ""
+      }
+    }
+  },
+  methods: {
+    profileClick()
+    {
+      this.$router.push('/home/profile');
+    },
+    scriptsClick()
+    {
+      this.$router.push('/home/scripts');
+    },
+    roomClick()
+    {
+      this.$router.push('/home/room');
     }
   }
 }
