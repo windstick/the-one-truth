@@ -8,7 +8,7 @@
       <div v-if="!User.logIn" class="banner_item">注册</div>
     </Banner>
 
-    <router-view :User="User"></router-view>
+    <router-view :User="User" id="main"></router-view>
   </div>
 </template>
 
@@ -51,7 +51,13 @@ export default {
 
 <style>
   #home{
+    background-color: rgba(246, 249, 255);
   }
+/*
+  #main{
+    padding: 50px 0
+  }
+  */
 
   .banner_item {
     margin: 0 10px 0 10px;

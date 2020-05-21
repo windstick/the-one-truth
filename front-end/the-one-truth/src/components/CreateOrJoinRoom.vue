@@ -4,6 +4,7 @@
     <h2>创建房间</h2>
     <label for="createsize">创建房间的大小</label>
       <input type="number" id="createsize" v-model.number="roomSize"></input>
+    <br/>
     <button id="create" @click="createRoom">创建房间</button>
 
     <h2>加入房间</h2>

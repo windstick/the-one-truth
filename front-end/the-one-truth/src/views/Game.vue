@@ -63,7 +63,7 @@ export default {
       scriptText:0,
       scriptid:0,
       player:0,
-      background: null,
+      background: '这里是背景故事',
       timeline: '这是时间线。',
       task: '这是任务。',
       truth: '张三是凶手。',
@@ -128,6 +128,7 @@ export default {
     }
   },
   mounted () {
+    /*
     const  _this = this
     this.$axios
       .post('http://xx.com/api/start_game')
@@ -135,11 +136,12 @@ export default {
       .catch(function (error) { // 请求失败处理
         console.log(error);
       });
+      */
   },
   created(){
       console.log(this.$route.params)
-      this.scriptid=this.$route.params.script_id
-      this.player=this.$route.params.player
+      this.scriptid=this.$route.query.script_id
+      this.player=this.$route.query.player
   }
 }
 </script>
