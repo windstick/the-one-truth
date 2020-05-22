@@ -26,5 +26,5 @@ urlpatterns = [
     path('get_friends_list/',bv.get_friend_list_request),
     path('add_friend_request/',bv.add_friend_request),
     path('delete_friend_request/',bv.delete_friend_request),
-    
+    path('check_clue/',bv.check_clue),
 ]

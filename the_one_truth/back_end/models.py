@@ -59,7 +59,7 @@ class game_room(models.Model):
     room_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True)
     size = models.IntegerField(null = True)
     stage = models.CharField(max_length=50)
-    script_title = models.ForeignKey(script,on_delete=models.PROTECT)
+    script_id = models.ForeignKey(script,on_delete=models.PROTECT)
 
 class player(models.Model):
     player_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True)
@@ -71,6 +71,7 @@ class player(models.Model):
     ready_3 = models.IntegerField(default=0)
 
 class player_clue(models.Model):
+    is_public = models.BooleanField()
     player_ID = models.ForeignKey(player,on_delete = models.CASCADE)
     clue_ID = models.ForeignKey(game_clue,on_delete = models.PROTECT)
     room_ID = models.ForeignKey(game_room,on_delete = models.CASCADE)
