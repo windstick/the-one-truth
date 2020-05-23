@@ -8,26 +8,28 @@ class User(models.Model):
     add_time = models.DateTimeField(auto_now=True)
     last_login_time = models.DateTimeField(auto_now=True)
     group_id = models.IntegerField(null = True)
-    friend_list = models.CharField(max_length=1000)
+    friend_list = models.CharField(max_length=1000, null = True)
     friend_num = models.IntegerField(null = True)
     class Meta:
         db_table="User"
     def __unicode__(self):
         return self.name
-"""
+
+
 class game_role(models.Model):
-    role_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True)
-    script_title = models.ForeignKey("script",related_name='title',on_delete=models.PROTECT)
+    role_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True, default = 0)
+    #script_title = models.ForeignKey("script",related_name='title',on_delete=models.PROTECT)
+    script_ID = models.DecimalField(max_digits = 20, decimal_places = 0, default = '')
     role_name = models.CharField(max_length=50)
     task = models.CharField(max_length=200)
     role_description = models.CharField(max_length=5000)
-"""
+
 class script(models.Model):
-    title = models.CharField(max_length=50,primary_key=True,default='')
-    script_ID = models.DecimalField(max_digits=20,decimal_places=0,default='')
+    title = models.CharField(max_length=50,default='')
+    script_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key = True,default='')
     add_time = models.DateTimeField(auto_now=True)
     player_num = models.IntegerField(null = True)
-    #muder_role_id = models.ForeignKey(game_role, on_delete = models.PROTECT)
+    muder_role_id = models.ForeignKey(game_role, on_delete = models.PROTECT, null = True)
     truth = models.CharField(max_length=100,default='')
     description = models.CharField(max_length=5000,default='None')
     def __unicode__(self):

@@ -299,3 +299,36 @@ def start_game(request):
             response['error_code'] = 1
             response['msg'] = error
         return JsonResponse(response)
+
+
+def first_stage(request):
+    response = {}
+    error = None
+    req = json.loads(request.body)
+    room_id = req['room_id']
+    role_id = req['role_id']
+    player_list=models.player.objects.filter(room_id=room_id)
+    flag=True
+    room=models.game_clue.objects.filter(room_id=room_id).first()
+    player_num=room.size
+    ready_num=0
+    for player in player_list:
+        if not player.ready_1:
+            if player.role_id == role_id:
+                player.ready_1 = True
+                player.save()
+        else:
+            ready_num=ready_num+1
+    if error is None:
+        data = {
+            "player_num":player_num,
+            "ready_player_num":ready_num
+        }
+        response['error_code'] = 0
+    else:
+
+        response['error_code'] = 1
+        response['msg'] = error
+    return JsonResponse(response)
+
+
