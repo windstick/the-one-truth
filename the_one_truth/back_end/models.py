@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class User(models.Model):
     name = models.CharField(max_length=20,primary_key=True)
     password = models.CharField(max_length=20)
@@ -38,7 +37,7 @@ class script(models.Model):
 class game_user(models.Model):
     user_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True)
     pass_word = models.CharField(max_length=15)
-    user_name = models.ForeignKey(User,on_delete=models.PROTECT)
+    user_name = models.ForeignKey(User,on_delete=models.PROTECT, default ='')
     remark = models.CharField(max_length=20)
     user_level = models.IntegerField(null = True)
     email = models.CharField(max_length=50)

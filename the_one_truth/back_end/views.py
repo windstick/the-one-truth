@@ -205,8 +205,8 @@ def refresh_clue(request):
                     open = player_clue.is_public
                 cur_data = {
                     "clue_id":all_clue[i].clue_id,
-                    "owner_role_id":all_clue[i].
-                    "open":boolean
+                    "owner_role_id":owner_role_id,
+                    "open":open
                 }
                 data.append(cur_data)
             response['data'] = data
@@ -220,25 +220,25 @@ def refresh_clue(request):
 
 def pulic_clue(request):
     if request.method == 'POST':
-    response = {}
-    error = None
+        response = {}
+        error = None
 
-    req = json.loads(request.body)
-    room_id = req['room_id']        
-    clue_id = req['clue_id']
+        req = json.loads(request.body)
+        room_id = req['room_id']        
+        clue_id = req['clue_id']
 
-    # check if clue id is correct
-    find_clue = models.game_clue(clue_id = clue_id)
-    if not find_clue:
-        error = 'No such clue'
-    else:
-        cur_player_clue = models.player_clue.objects.filter(clue_id = clue_id)[0]
-        cur_player_clue.is_public = True
-        cur_player_clue.save()
+        # check if clue id is correct
+        find_clue = models.game_clue(clue_id = clue_id)
+        if not find_clue:
+            error = 'No such clue'
+        else:
+            cur_player_clue = models.player_clue.objects.filter(clue_id = clue_id)[0]
+            cur_player_clue.is_public = True
+            cur_player_clue.save()
 
-    if error is None:
-        response['error_num'] = 0
-    else:
-        response['error_num'] = 1
-        response['msg'] = error
-    return JsonResponse(response)
+        if error is None:
+            response['error_num'] = 0
+        else:
+            response['error_num'] = 1
+            response['msg'] = error
+        return JsonResponse(response)

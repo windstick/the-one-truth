@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'the_one_truth_database',
         'USER': 'root',
-        'PASSWORD': 'dyh980509',
+        'PASSWORD': '1234',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
