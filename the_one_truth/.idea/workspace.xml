@@ -1,25 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9297750e-ad87-4e92-bec6-b9f81bfa4cfb" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back_end/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/back_end/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back_end/migrations/0002_auto_20200511_1413.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/back_end/migrations/0003_auto_20200511_1414.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/back_end/migrations/0004_auto_20200511_1454.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/back_end/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/back_end/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back_end/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/back_end/views.py" afterDir="false" />
-    </list>
+    <list default="true" id="9297750e-ad87-4e92-bec6-b9f81bfa4cfb" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
-  </component>
   <component name="ProjectId" id="1a74FB5aS9TkVTfeOziP63oK5gZ" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -84,10 +72,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="454" y="71" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1586675488267" />
-    <state x="580" y="242" key="com.intellij.ide.util.TipDialog" timestamp="1590151127802">
+    <state x="580" y="242" key="com.intellij.ide.util.TipDialog" timestamp="1589965925894">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="580" y="242" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1590151127802" />
+    <state x="580" y="242" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1589965925894" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
