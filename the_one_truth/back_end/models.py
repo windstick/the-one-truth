@@ -7,12 +7,17 @@ class User(models.Model):
     add_time = models.DateTimeField(auto_now=True)
     last_login_time = models.DateTimeField(auto_now=True)
     group_id = models.IntegerField(null = True)
+<<<<<<< HEAD
     friend_list = models.CharField(max_length=1000, null = True)
+=======
+    friend_list = models.CharField(max_length=1000)
+>>>>>>> cjx
     friend_num = models.IntegerField(null = True)
     class Meta:
         db_table="User"
     def __unicode__(self):
         return self.name
+<<<<<<< HEAD
 
 
 class game_role(models.Model):
@@ -22,12 +27,26 @@ class game_role(models.Model):
     role_name = models.CharField(max_length=50)
     task = models.CharField(max_length=200)
     role_description = models.CharField(max_length=5000)
+=======
+"""
+class game_role(models.Model):
+    role_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True)
+    script_title = models.ForeignKey("script",related_name='title',on_delete=models.PROTECT)
+    role_name = models.CharField(max_length=50)
+    task = models.CharField(max_length=200)
+    role_description = models.CharField(max_length=5000)
+"""
+>>>>>>> cjx
 class script(models.Model):
     title = models.CharField(max_length=50,default='')
     script_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key = True,default='')
     add_time = models.DateTimeField(auto_now=True)
     player_num = models.IntegerField(null = True)
+<<<<<<< HEAD
     muder_role_id = models.ForeignKey(game_role, on_delete = models.PROTECT, null = True)
+=======
+    #muder_role_id = models.ForeignKey(game_role, on_delete = models.PROTECT)
+>>>>>>> cjx
     truth = models.CharField(max_length=100,default='')
     description = models.CharField(max_length=5000,default='None')
     def __unicode__(self):
@@ -73,4 +92,8 @@ class player_clue(models.Model):
     is_public = models.BooleanField()
     player_ID = models.ForeignKey(player,on_delete = models.CASCADE)
     clue_ID = models.ForeignKey(game_clue,on_delete = models.PROTECT)
+<<<<<<< HEAD
     room_ID = models.ForeignKey(game_room,on_delete = models.CASCADE)
+=======
+    room_ID = models.ForeignKey(game_room,on_delete = models.CASCADE)
+>>>>>>> cjx

@@ -7,7 +7,11 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="ProjectId" id="1a74FB5aS9TkVTfeOziP63oK5gZ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -72,10 +76,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="454" y="71" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1586675488267" />
-    <state x="580" y="242" key="com.intellij.ide.util.TipDialog" timestamp="1587903454711">
+    <state x="580" y="242" key="com.intellij.ide.util.TipDialog" timestamp="1590028166962">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="580" y="242" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1587903454711" />
+    <state x="580" y="242" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1590028166962" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -84,6 +88,10 @@
           <url>file://$PROJECT_DIR$/manage.py</url>
           <line>2</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/back_end/views.py</url>
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
