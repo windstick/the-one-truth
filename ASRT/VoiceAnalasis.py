@@ -36,6 +36,7 @@ def plot_wave(data, sr, title='Default'):
 	librosa.display.waveplot(data, sr)
 	plt.title(title)
 	plt.savefig(thispath+title+'.png')
+	plt.close()
 
 
 # 画频谱图：Log-Mel Spectrogram频谱
@@ -47,6 +48,7 @@ def plot_spec(data, sr, title='Default'):
 	plt.title(title)
 	plt.colorbar(format='%+2.0f dB')
 	plt.savefig(thispath+title+'.png')
+	plt.close()
 
 
 # 展示CQT变换
@@ -57,6 +59,7 @@ def plot_CQT(data, sr, title='Default'):
 	plt.colorbar(format='%+2.0f dB')
 	plt.title(title)
 	plt.savefig(thispath+title+'.png')
+	plt.close()
 
 
 def plot_wave_spec(data, sr, title1='Default', title2='Default'):
@@ -85,6 +88,7 @@ def plot_mfcc(data, sr, standardize=True, title='Default'):
 		mfccs = get_mfcc(data, sr)
 	librosa.display.specshow(mfccs, sr=sr, x_axis='time')
 	plt.savefig(thispath+title+'.png')
+	plt.close()
 
 
 
