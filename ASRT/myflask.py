@@ -3,6 +3,7 @@ from flask import Flask,send_from_directory
 from flask import request
 from datetime import timedelta
 import VoiceAnalasis as va
+import pinyin
 import tensorflow as tf
 import datetime
 from flask_cors import *  # 导入模块
@@ -137,6 +138,7 @@ def getsentence():
             r_speech = ms.RecognizeSpeech(wavs, fs)
         print(r_speech)
         str_pinyin = r_speech
+        r_speech=pinyin.process_pin_yin(r_speech)
         r = ml.SpeechToText(str_pinyin)
         l=len(fname)
         specdict=os.listdir(wavedict+"spec\\")
@@ -150,6 +152,7 @@ def getsentence():
             va.plot_mfcc(data, sr, standardize=False,title=fname[0:l-4])
             va.plot_mfcc(data, sr, standardize=True,title=fname[0:l-4])
         print(r)
+        print(r_speech[0][1])
         return {
             'r':r,
             'r_speech':r_speech
