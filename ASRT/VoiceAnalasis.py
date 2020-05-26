@@ -92,8 +92,8 @@ def plot_mfcc(data, sr, standardize=True, title='Default'):
 
 
 
-f = 'C:\\Users\\17000\\AI\\ASRT_v0.6.1\\wavdata\\20170001P00001A0001.wav'
-data, sr = load_voice(f)
+#f = 'C:\\Users\\17000\\AI\\ASRT_v0.6.1\\wavdata\\20170001P00001A0001.wav'
+#data, sr = load_voice(f)
 path='C:\\Users\\17000\\AI\\ASRT_v0.6.1\\wavdata\\'
 
 """

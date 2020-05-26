@@ -16,7 +16,7 @@ from general_function.file_wav import *
 
 graph = tf.get_default_graph()
 datapath = './'
-wavedict='C:\\Users\\17000\\AI\\ASRT_v0.6.1\\wavdata\\'
+wavedict='C:\\Users\\17000\\AI\\ASRT\\wavdata\\'
 wavelist=os.listdir(wavedict)
 fname='myfname'
 modelpath = 'model_speech/'
@@ -42,7 +42,7 @@ def hello_world():
 @cross_origin()
 def login():
     print('login')
-    return send_from_directory('C:\\Users\\17000\\AI\\ASRT_v0.6.1\\wavdata',filename='20170001P00001A0001.wav',as_attachment=True)
+    return send_from_directory(wavedict,filename='20170001P00001A0001.wav',as_attachment=True)
 
 @app.route('/api/download')
 @cross_origin()
@@ -50,7 +50,7 @@ def mydownload():
     print('badbadbadbad')
     global fname
     print(fname)
-    return send_from_directory('C:\\Users\\17000\\AI\\ASRT_v0.6.1\\wavdata',filename=fname,as_attachment=True)
+    return send_from_directory(wavedict,filename=fname,as_attachment=True)
 
 @app.route('/api/plotwave')
 @cross_origin()
@@ -96,7 +96,7 @@ def myplotmfccs():
 @cross_origin()
 def mydownload2():
     global fname
-    return send_from_directory('C:\\Users\\17000\\AI\\ASRT_v0.6.1\\wavdata',filename=fname,as_attachment=True)
+    return send_from_directory(wavedict,filename=fname,as_attachment=True)
 
 @app.route('/api/wavelist',methods=['GET','POST'])
 def getwavelist():
@@ -142,11 +142,13 @@ def getsentence():
         specdict=os.listdir(wavedict+"spec\\")
         if fname[0:l-4]+'.png' not in specdict:
             print("notin")
-            va.plot_wave(va.data,va.sr,fname[0:l-4])
-            va.plot_spec(va.data,va.sr,fname[0:l-4])
-            va.plot_CQT(va.data, va.sr,fname[0:l-4])
-            va.plot_mfcc(va.data, va.sr, standardize=False,title=fname[0:l-4])
-            va.plot_mfcc(va.data, va.sr, standardize=True,title=fname[0:l-4])
+            data,sr=va.load_voice(wavedict+fname)
+            va.path=wavedict
+            va.plot_wave(data,sr,fname[0:l-4])
+            va.plot_spec(data,sr,fname[0:l-4])
+            va.plot_CQT(data, sr,fname[0:l-4])
+            va.plot_mfcc(data, sr, standardize=False,title=fname[0:l-4])
+            va.plot_mfcc(data, sr, standardize=True,title=fname[0:l-4])
         print(r)
         return {
             'r':r,
