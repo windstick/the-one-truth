@@ -131,7 +131,7 @@ def delete_friend_request(request):
             user.friend_list.remove(user_to_be_delete)
             user_to_be_delete.friend_list.remove(user)
             user.update(friend_num=user.friend_num - 1)
-            user_to_be_add.update(friend_num=user_to_be_add.friend_num - 1)
+            user_to_be_delete.update(friend_num=user_to_be_delete.friend_num - 1)
         if error is None:
             response['error_num'] = 0
         else:
@@ -146,8 +146,6 @@ def init_room(request):
         error = None
         req = json.loads(request.body)
         num_person = req['num_person']
-        room_name = req['room_name']
-        uid = req['user_id']
         
         room_id, i = 0, 0
         room = models.Room.objects.filter(room_id=i).first()
