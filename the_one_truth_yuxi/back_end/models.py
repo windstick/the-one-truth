@@ -6,7 +6,7 @@ class User(models.Model):
     name = models.CharField(max_length=20, unique=True)
     password = models.CharField(max_length=20)
     email = models.EmailField(unique=True)
-    register_date = models.DateField(auto_now=True, auto_now_add=True)
+    register_date = models.DateTimeField(auto_now=True, auto_now_add=True)
     last_login_time = models.DateTimeField(auto_now=True, auto_now_add=True)
     group_id = models.IntegerField(null=True)
     friend_list = models.ManyToManyField('self', related_name='name', symmetrical=True)
@@ -94,6 +94,7 @@ class Clue(models.Model):
     clue_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
     script_title = models.ForeignKey('Script', related_name='title', on_delete=models.CASCADE)
     clue_description = models.CharField(max_length=5000)
+    text = models.CharField(max_length=50)
 
     def show_clue(self):
         return {
@@ -104,9 +105,14 @@ class Clue(models.Model):
 
 class Role(models.Model):
     role_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
+    role_name = models.CharField(max_length=20, default='')
     script_title = models.ForeignKey('Script', related_name='title', on_delete=models.CASCADE)
+    
     is_murder = models.IntegerField(default=0)
     task = models.CharField(max_length=200, default='')
+    background = models.CharField(max_length=200, default='')
+    timeline = models.CharField(max_length=200, default='')
+    
     role_description = models.CharField(max_length=5000, default='')
 
     class Meta:

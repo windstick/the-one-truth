@@ -44,11 +44,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-<<<<<<< HEAD
-    # 'django.middleware.csrf.CsrfViewMiddleware',
-=======
     #'django.middleware.csrf.CsrfViewMiddleware',
->>>>>>> cjx
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -83,11 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'the_one_truth_database',
         'USER': 'root',
-<<<<<<< HEAD
-        'PASSWORD': '1234',
-=======
         'PASSWORD': '123456',
->>>>>>> cjx
         'HOST': '127.0.0.1',
         'PORT': '4396',
     }
