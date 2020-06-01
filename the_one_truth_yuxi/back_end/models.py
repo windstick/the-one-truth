@@ -37,7 +37,7 @@ class Script(models.Model):
     title = models.CharField(max_length=25, unique=True)
     add_time = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    history_script_id = models.ManyToManyField('self', related_name='script_id_history', symmetrical=False)
+    history_script = models.ManyToManyField('self', related_name='script_history', symmetrical=False)
     player_num = models.IntegerField(null=True)
     description = models.CharField(max_length=5000, default='')
     truth = models.CharField(max_length=100, default='')
@@ -140,6 +140,4 @@ class Clue(models.Model):
             'script id': self.script_id,
             'clue info': self.clue_description
         }
-
-
 

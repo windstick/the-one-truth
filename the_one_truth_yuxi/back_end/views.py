@@ -199,7 +199,7 @@ def upsend_script(request):
         player_num = req['player_num']
         truth = req['truth']
         description = req['description']
-        murder_id = req['murder_id']
+        # murder_id = req['murder_id']
         
         ##=== update script ===##
         sc_id = 0
@@ -208,7 +208,7 @@ def upsend_script(request):
             sc_id += 1
             script = models.Script.objects.filter(script_id=sc_id).first()
         script = models.Script.objects.create(script_id=sc_id, title=title, truth=truth, description=description,
-                                              player_num=player_num, add_time=now(), murder_id=murder_id)
+                                              player_num=player_num, add_time=now(), murder_id=None)
 
         ##=== update role ===##
         role_info = req['role_list']
@@ -222,7 +222,10 @@ def upsend_script(request):
                                               is_murder=rl_info['is_murder'], task=rl_info['task'], 
                                               background=rl_info['background'], timeline=rl_info['timeline'],
                                               role_description=rl_info['role_description'])
-            rl_id += 1        
+            if rl_info['is_murder']:
+                script.murder_id = rl_id
+                script.save()
+            rl_id += 1                    
 
         ##=== update clue ===##
         clue_info = req['clue_list']
