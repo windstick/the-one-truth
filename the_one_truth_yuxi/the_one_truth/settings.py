@@ -77,9 +77,9 @@ WSGI_APPLICATION = 'the_one_truth.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'the_one_truth_database',
+        'NAME': 'the_one_truth_database_yuxi',
         'USER': 'root',
-        'PASSWORD': '123456',
+        'PASSWORD': '1234',
         'HOST': '127.0.0.1',
         'PORT': '4396',
     }
