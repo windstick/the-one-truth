@@ -10,9 +10,10 @@ print(sys.path)
 
 from . import models
 
-from . import models
-
 # Create your views here.
+
+def index(request):
+    return HttpResponse('Hello, world!')
 
 
 def test(request):
