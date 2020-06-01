@@ -36,7 +36,7 @@ class Script(models.Model):
     script_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
     title = models.CharField(max_length=25, unique=True)
     add_time = models.DateTimeField(auto_now=True)
-    author_name = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     history_script_id = models.ManyToManyField('self', related_name='script_id_history', symmetrical=False)
     player_num = models.IntegerField(null=True)
     description = models.CharField(max_length=5000, default='')
@@ -66,7 +66,7 @@ class Room(models.Model):
     room_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
     size = models.IntegerField(null=True)
     stage = models.IntegerField(default=0)
-    script_id = models.ForeignKey(Script, related_name='room_script', on_delete=models.PROTECT, null=True)
+    script = models.ForeignKey(Script, related_name='room_script', on_delete=models.PROTECT, null=True)
 
     class Meta:
         db_table = 'Room'
@@ -75,7 +75,7 @@ class Room(models.Model):
 class Role(models.Model):
     role_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
     role_name = models.CharField(max_length=20, default='')
-    script_id = models.ForeignKey(Script, related_name='role_script', on_delete=models.CASCADE)
+    script = models.ForeignKey(Script, related_name='role_script', on_delete=models.CASCADE)
     
     is_murder = models.IntegerField(default=0)
     task = models.CharField(max_length=200, default='')
@@ -100,9 +100,9 @@ class Role(models.Model):
 
 class Player(models.Model):
     player_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
-    user_id = models.ForeignKey(User, related_name='player_user', on_delete=models.CASCADE)
-    role_id = models.ForeignKey(Role, related_name='player_role', on_delete=models.SET_NULL, null=True)
-    room_id = models.ForeignKey(Room, related_name='player_room', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='player_user', on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, related_name='player_role', on_delete=models.SET_NULL, null=True)
+    room = models.ForeignKey(Room, related_name='player_room', on_delete=models.CASCADE)
     is_master = models.IntegerField(default=0)
     movement_point = models.IntegerField(default=0)
     ready_1 = models.IntegerField(default=0)
@@ -126,11 +126,11 @@ class Player(models.Model):
 
 class Clue(models.Model):
     clue_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
-    script_id = models.ForeignKey(Script, related_name='clue_script', on_delete=models.CASCADE)
+    script = models.ForeignKey(Script, related_name='clue_script', on_delete=models.CASCADE)
     clue_description = models.CharField(max_length=5000)
     text = models.CharField(max_length=50)
 
-    player_list = models.ManyToManyField(Player)
+    player_list = models.ManyToManyField(Player, null=True)
 
     class Meta:
         db_table = 'Clue'

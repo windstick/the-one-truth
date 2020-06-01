@@ -84,7 +84,8 @@ def login_handler(request):
                 "groupid": user.group_id,
                 "last_login_time": user.last_login_time,
             }
-            # user.update(last_login_time=now())
+            user.last_login_time = now()
+            user.save()
             response['data'] = data
         else:
             response['error_num'] = 1
@@ -167,18 +168,16 @@ def init_room(request):
         req = json.loads(request.body)
         num_person = req['num_person']
         
-        room_id, i = 0, 0
-        room = models.Room.objects.filter(room_id=i).first()
+        room_id = 0
+        room = models.Room.objects.filter(room_id=room_id).first()
         while room:
-            i += 1
-            room = models.Room.objects.filter(room_id=i).first()
-        # script_item = models.Script.objects.filter(script_id=0).first()
-        room = models.Room.objects.create(room_id=i, size=num_person, stage=0, script_id=script_item)
-        room_id = i
+            room_id += 1
+            room = models.Room.objects.filter(room_id=room_id).first()        
+        room = models.Room.objects.create(room_id=room_id, size=num_person, stage=0, script=None)
 
         if error is None:
             script = models.Script.objects.filter(player_num=num_person)
-            script_name = [sc.title for sc in script]
+            script_title = [sc.title for sc in script]
             response['error_code'] = 0
             data = {
                 "room_id": room_id,
@@ -192,9 +191,6 @@ def init_room(request):
 
 
 def upsend_script(request):
-    # update_role
-    # update_clue
-    # update_script
     if request.method == 'POST':
         response = {}
         error = None
@@ -203,29 +199,51 @@ def upsend_script(request):
         player_num = req['player_num']
         truth = req['truth']
         description = req['description']
-        murder = req['murder_id']
+        murder_id = req['murder_id']
         
+        ##=== update script ===##
         sc_id = 0
         script = models.Script.objects.filter(script_id=sc_id).first()
         while script:
             sc_id += 1
             script = models.Script.objects.filter(script_id=sc_id).first()
         script = models.Script.objects.create(script_id=sc_id, title=title, truth=truth, description=description,
-                                              player_num=player_num, add_time=now(), murder_id=murder)
+                                              player_num=player_num, add_time=now(), murder_id=murder_id)
+
+        ##=== update role ===##
+        role_info = req['role_list']
+        rl_id = 0
+        for rl_info in role_info:
+            role = models.Role.objects.filter(role_id=rl_id).first()
+            while role:
+                rl_id += 1
+                role = models.Role.objects.filter(role_id=rl_id).first()
+            role = models.Role.objects.create(role_id=rl_id, role_name=rl_info['name'], script=script, 
+                                              is_murder=rl_info['is_murder'], task=rl_info['task'], 
+                                              background=rl_info['background'], timeline=rl_info['timeline'],
+                                              role_description=rl_info['role_description'])
+            rl_id += 1        
+
+        ##=== update clue ===##
+        clue_info = req['clue_list']
+        cl_id = 0
+        for cl_info in clue_info:
+            clue = models.Clue.objects.filter(clue_id=cl_id).first()
+            while clue:
+                cl_id += 1
+                clue = models.Clue.objects.filter(clue_id=cl_id).first()
+            clue = models.Clue.objects.create(clue_id=cl_id, script=script, text=cl_info['text']
+                                              clue_description=cl_info['clue_description'])
+            cl_id += 1
 
         if error is None:
             sc = models.Script.objects.filter(script_id=sc_id).first()
-            ti = sc.title
-            pn = sc.player_num
-            tr = sc.truth
-            des = sc.description
-            mu = sc.murder_id
             data = {
-                "script_tittle": ti,
-                "player_num": pn,
-                "truth": tr,
-                "description": des,
-                "murder": mu
+                "script_tittle": sc.title,
+                "player_num": sc.player_num,
+                "truth": sc.truth,
+                "description": sc.description,
+                "murder": sc.murder_id
             }
             response['data'] = data
         return JsonResponse(response)
@@ -242,33 +260,30 @@ def enter_room(request):
         user = models.User.objects.filter(name=username).first()
         room = models.Room.objects.filter(room_id=room_id).first()
 
-        player = models.Player.objects.filter(user_id_id=user._id).first()
+        player = models.Player.objects.filter(user_id=user._id).first()
 
         if not player:
-            player_id, i = 0, 0
-            player = models.Player.objects.filter(player_id=i).first()
+            player_id = 0
+            player = models.Player.objects.filter(player_id=player_id).first()
             while player:
-                i += 1
-                player = models.Player.objects.filter(player_id=i).first()
-            player = models.Player.objects.create(player_id=i, user_id=user, room_id=room, 
-                                                is_master=is_master, role_id=None)
-            player_id = i
+                player_id += 1
+                player = models.Player.objects.filter(player_id=player_id).first()
+            player = models.Player.objects.create(player_id=player_id, user_id=user._id, 
+                                                  room_id=room_id, role=None,
+                                                  is_master=is_master)
 
-        player_list = models.Player.objects.filter(room_id_id=room_id)
-        room = models.Room.objects.filter(room_id=room_id).first()
+        player_list = models.Player.objects.filter(room_id=room_id)
         
-        player_name_list, start, script_id = [], False, None
+        player_name_list = [player.user.name for player in player_list]
+        start = False
         if room.stage == 1:
             start = True
-        script_id = room.script_id_id
-        for player in player_list:
-            player_name_list.append(player.user_id._id)
         if error is None:
             response['error_code'] = 0
             data = {
                 "player_list": player_name_list,
                 "start": start,
-                "script_id": script_id        # TODO: change this return
+                "script_id": room.script_id        # TODO: change this return
             }
             response['data'] = data
         else:
@@ -285,7 +300,7 @@ def room_owner_choose_script(request):
         room_id = req['room_id']
         script_title = req['script_title']      # TODO: this changed
         room = models.Room.objects.filter(room_id=room_id).first()
-        room.script_id = models.Script.objects.filter(title=script_title).first()
+        room.script = models.Script.objects.filter(title=script_title).first()
         room.save()
         if error is None:
             response['error_code'] = 0
