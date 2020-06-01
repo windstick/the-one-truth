@@ -9,7 +9,7 @@ class User(models.Model):
     register_date = models.DateTimeField(auto_now=True)
     last_login_time = models.DateTimeField(auto_now=True)
     group_id = models.IntegerField(null=True)
-    friend_list = models.ManyToManyField('self', symmetrical=True)
+    friend_list = models.ManyToManyField('self', symmetrical=True, null=True)
     friend_num = models.IntegerField(null=True)
     
     class Meta:
@@ -66,7 +66,7 @@ class Room(models.Model):
     room_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
     size = models.IntegerField(null=True)
     stage = models.IntegerField(default=0)
-    script_id = models.ForeignKey(Script, related_name='room_script', on_delete=models.PROTECT)
+    script_id = models.ForeignKey(Script, related_name='room_script', on_delete=models.PROTECT, null=True)
 
     class Meta:
         db_table = 'Room'
