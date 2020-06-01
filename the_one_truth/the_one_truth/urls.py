@@ -27,7 +27,8 @@ urlpatterns = [
     path('add_friend_request/', bv.add_friend_request),
     path('delete_friend_request/', bv.delete_friend_request),
     path('init_room/',bv.init_room),
-    path('enter_room/,',bv.enter_room),
-    path('room_owner_choose_script',bv.room_owner_choose_script),
-    path('start_game',bv.start_game)
+    path('enter_room/',bv.enter_room),
+    path('room_owner_choose_script/',bv.room_owner_choose_script),
+    path('start_game/',bv.start_game),
+    path('upsend_script/',bv.upsend_script)
 ]

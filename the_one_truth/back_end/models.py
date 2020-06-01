@@ -2,76 +2,141 @@ from django.db import models
 
 
 class User(models.Model):
-    name = models.CharField(max_length=20,primary_key=True)
+    _id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
+    name = models.CharField(max_length=20, unique=True)
     password = models.CharField(max_length=20)
     email = models.EmailField(unique=True)
-    add_time = models.DateTimeField(auto_now=True)
+    register_date = models.DateTimeField(auto_now=True)
     last_login_time = models.DateTimeField(auto_now=True)
-    group_id = models.IntegerField(null = True)
-    friend_list = models.CharField(max_length=1000, null = True)
-    friend_num = models.IntegerField(null = True)
+    group_id = models.IntegerField(null=True)
+    friend_list = models.ManyToManyField('self', symmetrical=True, null=True)
+    friend_num = models.IntegerField(null=True)
+
     class Meta:
-        db_table="User"
-    def __unicode__(self):
-        return self.name
+        db_table = 'User'
+
+    def get_friend_list(self):
+        return self.friend_list.all()
+
+    def get_group_type(self):
+        return 'manager' if self.group_id == 1 else 'civilian'
+
+    def show_user_info(self):
+        user_info = {
+            'name': self.name,
+            'email': self.email,
+            'register date': self.register_date,
+            'user group': self.get_group_type(),
+            'friend list': self.get_friend_list()
+        }
+        return user_info
 
 
-class game_role(models.Model):
-    role_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True, default = 0)
-    #script_title = models.ForeignKey("script",related_name='title',on_delete=models.PROTECT)
-    script_ID = models.DecimalField(max_digits = 20, decimal_places = 0, default = '')
-    role_name = models.CharField(max_length=50)
-    task = models.CharField(max_length=200)
-    role_description = models.CharField(max_length=5000)
-class script(models.Model):
-    title = models.CharField(max_length=50,default='')
-    script_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key = True,default='')
+class Script(models.Model):
+    script_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
+    title = models.CharField(max_length=25, unique=True)
     add_time = models.DateTimeField(auto_now=True)
-    player_num = models.IntegerField(null = True)
-    muder_role_id = models.ForeignKey(game_role, on_delete = models.PROTECT, null = True)
-    truth = models.CharField(max_length=100,default='')
-    description = models.CharField(max_length=5000,default='None')
-    def __unicode__(self):
-        return self.title
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    history_script_id = models.ManyToManyField('self', related_name='script_id_history', symmetrical=False)
+    player_num = models.IntegerField(null=True)
+    description = models.CharField(max_length=5000, default='')
+    truth = models.CharField(max_length=100, default='')
+
+    murder_id = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'Script'
+
+    def get_history_scripts(self):
+        return self.history_script_id.all()
+
+    def show_script_info(self):
+        script_info = {
+            'title': self.title,
+            'player number': self.player_num,
+            'description': self.description,
+            'auther name': self.author_name,
+            'history scripts': self.get_history_scripts(),
+            'add time': self.add_time
+        }
+        return script_info
 
 
-class game_user(models.Model):
-    user_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True)
-    pass_word = models.CharField(max_length=15)
-    user_name = models.ForeignKey(User,on_delete=models.PROTECT)
-    remark = models.CharField(max_length=20)
-    user_level = models.IntegerField(null = True)
-    email = models.CharField(max_length=50)
-    register_date = models.DateField()
-    last_login_time = models.DateTimeField()
-    def __unicode__(self):
-        return self.user_ID
+class Room(models.Model):
+    room_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
+    size = models.IntegerField(null=True)
+    stage = models.IntegerField(default=0)
+    script = models.ForeignKey(Script, related_name='room_script', on_delete=models.PROTECT, null=True)
 
-class game_clue(models.Model):
-    clue_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True)
-    script_title = models.ForeignKey(script,on_delete=models.PROTECT)
-    clue_description = models.CharField(max_length=5000)
-    def __unicode__(self):
-        return self.clue_ID
+    class Meta:
+        db_table = 'Room'
 
 
-class game_room(models.Model):
-    room_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True)
-    size = models.IntegerField(null = True)
-    stage = models.CharField(max_length=50)
-    script_id = models.ForeignKey(script,on_delete=models.PROTECT)
+class Role(models.Model):
+    role_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
+    role_name = models.CharField(max_length=20, default='')
+    script = models.ForeignKey(Script, related_name='role_script', on_delete=models.CASCADE)
 
-class player(models.Model):
-    player_ID = models.DecimalField(max_digits=20,decimal_places=0,primary_key=True)
-    user_id = models.ForeignKey(game_user,on_delete=models.PROTECT)
-    room_id = models.ForeignKey(game_room,on_delete=models.CASCADE)
-    #role_id = models.ForeignKey(game_role,on_delete=models.PROTECT)
+    is_murder = models.IntegerField(default=0)
+    task = models.CharField(max_length=200, default='')
+    background = models.CharField(max_length=200, default='')
+    timeline = models.CharField(max_length=200, default='')
+
+    role_description = models.CharField(max_length=5000, default='')
+
+    class Meta:
+        db_table = 'Role'
+
+    def show_info(self, level):
+        info = {
+            'script id': self.script_id,
+            'role description': self.role_description
+        }
+        if level == 'self':
+            info['task'] = self.task
+            info['is_murder'] = self.is_murder
+        return info
+
+
+class Player(models.Model):
+    player_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
+    user = models.ForeignKey(User, related_name='player_user', on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, related_name='player_role', on_delete=models.SET_NULL, null=True)
+    room = models.ForeignKey(Room, related_name='player_room', on_delete=models.CASCADE)
+    is_master = models.IntegerField(default=0)
+    movement_point = models.IntegerField(default=0)
     ready_1 = models.IntegerField(default=0)
     ready_2 = models.IntegerField(default=0)
     ready_3 = models.IntegerField(default=0)
 
-class player_clue(models.Model):
-    is_public = models.BooleanField()
-    player_ID = models.ForeignKey(player,on_delete = models.CASCADE)
-    clue_ID = models.ForeignKey(game_clue,on_delete = models.PROTECT)
-    room_ID = models.ForeignKey(game_room,on_delete = models.CASCADE)
+    class Meta:
+        db_table = 'Player'
+
+    def ready(self, tag):
+        if tag == 1:
+            assert self.ready_1 == 0
+            self.ready_1 = 1
+        elif tag == 2:
+            assert self.ready_1 == 1 and self.ready_2 == 0
+            self.ready_2 = 1
+        elif tag == 3:
+            assert self.ready_1 + self.ready_2 == 2 and self.ready_3 == 0
+            self.ready_3 = 1
+
+
+class Clue(models.Model):
+    clue_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
+    script = models.ForeignKey(Script, related_name='clue_script', on_delete=models.CASCADE)
+    clue_description = models.CharField(max_length=5000)
+    text = models.CharField(max_length=50)
+
+    player_list = models.ManyToManyField(Player, null=True)
+
+    class Meta:
+        db_table = 'Clue'
+
+    def show_clue(self):
+        return {
+            'script id': self.script_id,
+            'clue info': self.clue_description
+        }
