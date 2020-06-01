@@ -37,7 +37,11 @@ class Script(models.Model):
     title = models.CharField(max_length=25, unique=True)
     add_time = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+<<<<<<< HEAD
     history_script_id = models.ManyToManyField('self', related_name='script_id_history', symmetrical=False)
+=======
+    history_script = models.ManyToManyField('self', related_name='script_history', symmetrical=False)
+>>>>>>> c0e94df44d76745807d8603ba2f3d8abe14c7aaa
     player_num = models.IntegerField(null=True)
     description = models.CharField(max_length=5000, default='')
     truth = models.CharField(max_length=100, default='')

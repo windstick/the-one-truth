@@ -191,6 +191,7 @@ def init_room(request):
 
 
 def upsend_script(request):
+<<<<<<< HEAD
     """
     title:
     player_num:
@@ -202,6 +203,8 @@ def upsend_script(request):
 
     ]
     """
+=======
+>>>>>>> c0e94df44d76745807d8603ba2f3d8abe14c7aaa
     if request.method == 'POST':
         response = {}
         error = None
@@ -246,7 +249,11 @@ def upsend_script(request):
             while clue:
                 cl_id += 1
                 clue = models.Clue.objects.filter(clue_id=cl_id).first()
+<<<<<<< HEAD
             clue = models.Clue.objects.create(clue_id=cl_id, script=script, text=cl_info['text'],
+=======
+            clue = models.Clue.objects.create(clue_id=cl_id, script=script, text=cl_info['text']
+>>>>>>> c0e94df44d76745807d8603ba2f3d8abe14c7aaa
                                               clue_description=cl_info['clue_description'])
             cl_id += 1
 
@@ -333,7 +340,11 @@ def start_game(request):
         script_title = req['script_title']
         script = models.Script.objects.filter(title=script_title).first()
         room = models.Room.objects.filter(room_id=room_id).first()
+<<<<<<< HEAD
         role_list = models.Role.objects.filter(script_id=script.script_id)
+=======
+        role_list = models.Role.objects.filter(script_id_id=script.script_id)
+>>>>>>> c0e94df44d76745807d8603ba2f3d8abe14c7aaa
         truth = script.truth
         murder_role = models.Role.objects.filter(script=script, is_murder=1).first()
 
