@@ -363,3 +363,101 @@ def start_game(request):
             response['error_code'] = 1
             response['msg'] = error
         return JsonResponse(response)
+
+def check_clue(request):
+    if request.method == 'POST':
+        response = {}
+        error = None
+
+        req = json.loads(request.body)
+        room_id = req['room_id']        
+        role_id = req['role_id']
+        clue_id = req['clue_id']
+
+        # check if clue id is correct
+        find_clue = models.Clue.objects.filter(clue_id = clue_id)
+        find_player = models.Player.objects.filter(room_id = room_id, role_id= role_id)
+        print(not find_player )
+        if not find_clue or not find_player:
+            error = 'No such clue or no such player'
+        else:
+            find_player = find_player[0]
+            find_clue = find_clue[0]
+            models.PlayerClue(is_public = 0, player_id = find_player.player_id, clue_id = clue_id).save()
+
+        if error is None:
+            response['error_num'] = 0
+        else:
+            response['error_num'] = 1
+            response['msg'] = error
+    return JsonResponse(response)
+
+
+def refresh_clue(request):
+    if request.method == 'POST':
+        response = {}
+        error = None
+
+        req = json.loads(request.body)
+        room_id = req['room_id']        
+
+        # check if clue id is correct
+        find_room = models.Room.objects.filter(room_id = room_id)
+        if not find_room:
+            error = 'No such room'
+        else:
+            script_id = models.Room.objects.filter(room_id = room_id)[0].script_id
+            all_clue = models.Clue.objects.filter(script_id = script_id)
+            data = []
+            for i in range(len(all_clue)):
+                #get player_clue
+                clue_id = all_clue[i].clue_id
+                player_clue = models.PlayerClue.objects.filter(clue_id = clue_id)
+                # if no owner
+                if not player_clue :
+                    owner_role_id = None
+                    is_open = False
+                else:
+                    player_clue = player_clue[0]
+                    owner_role_id = player_clue.player_id
+                    is_open = player_clue.is_public
+                cur_data = {
+                    "clue_id":all_clue[i].clue_id,
+                    "owner_role_id":owner_role_id,
+                    "open":is_open
+                }
+                data.append(cur_data)
+            response['data'] = data
+        if error is None:
+            response['error_num'] = 0
+        else:
+            response['error_num'] = 1
+            response['msg'] = error
+    return JsonResponse(response)
+
+
+def public_clue(request):
+    if request.method == 'POST':
+        response = {}
+        error = None
+
+        req = json.loads(request.body)
+        room_id = req['room_id']        
+        clue_id = req['clue_id']
+
+        # check if clue id is correct
+        find_clue = models.Clue.objects.filter(clue_id = clue_id)
+        if not find_clue:
+            error = 'No such clue'
+        else:
+            find_clue = find_clue[0]
+            cur_player_clue = models.PlayerClue.objects.filter(clue_id = clue_id)[0]
+            cur_player_clue.is_public = 1
+            cur_player_clue.save()
+
+        if error is None:
+            response['error_num'] = 0
+        else:
+            response['error_num'] = 1
+            response['msg'] = error
+        return JsonResponse(response)

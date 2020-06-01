@@ -1,0 +1,10 @@
+ select S.CITY, S.SNAME
+ from S natural join SPJ
+ group by S.CITY, S.SNO, S.SNAME
+ having sum(QTY) >=
+     all(
+     select sum(QTY)
+     from (S as S1) natural join SPJ
+     where S.CITY = S1.CITY
+     group by S1.CITY, S1.SNO
+     );

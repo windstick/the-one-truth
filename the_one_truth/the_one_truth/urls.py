@@ -30,5 +30,8 @@ urlpatterns = [
     path('enter_room/',bv.enter_room),
     path('room_owner_choose_script/',bv.room_owner_choose_script),
     path('start_game/',bv.start_game),
-    path('upsend_script/',bv.upsend_script)
+    path('upsend_script/',bv.upsend_script),
+    path('check_clue/',bv.check_clue),
+    path('refresh_clue/',bv.refresh_clue),
+    path('public_clue/',bv.public_clue)
 ]
