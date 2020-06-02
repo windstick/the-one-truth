@@ -29,10 +29,12 @@ urlpatterns = [
     path('delete_friend_request/', bv.delete_friend_request),
     path('init_room/',bv.init_room),
     path('enter_room/',bv.enter_room),
+    path('exit_room/',bv.exit_room),
     path('room_owner_choose_script/',bv.room_owner_choose_script),
     path('start_game/',bv.start_game),
     path('upsend_script/',bv.upsend_script),
     path('check_clue/',bv.check_clue),
     path('refresh_clue/',bv.refresh_clue),
-    path('public_clue/',bv.public_clue)
+    path('public_clue/',bv.public_clue),
+    path('send_message/', bv.send_msg)
 ]

@@ -36,8 +36,8 @@ class Script(models.Model):
     script_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
     title = models.CharField(max_length=25, unique=True)
     add_time = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    history_script = models.ManyToManyField('self', related_name='script_history', symmetrical=False)
+    # author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    # history_script = models.ManyToManyField('self', related_name='script_history', symmetrical=False)
     player_num = models.IntegerField(null=True)
     description = models.CharField(max_length=5000, default='')
     truth = models.CharField(max_length=100, default='')
@@ -105,23 +105,14 @@ class Player(models.Model):
     room = models.ForeignKey(Room, related_name='player_room', on_delete=models.CASCADE)
     is_master = models.IntegerField(default=0)
     movement_point = models.IntegerField(default=0)
-    ready_1 = models.IntegerField(default=0)
-    ready_2 = models.IntegerField(default=0)
-    ready_3 = models.IntegerField(default=0)
+    ready_status = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'Player'
 
     def ready(self, tag):
-        if tag == 1:
-            assert self.ready_1 == 0
-            self.ready_1 = 1
-        elif tag == 2:
-            assert self.ready_1 == 1 and self.ready_2 == 0
-            self.ready_2 = 1
-        elif tag == 3:
-            assert self.ready_1 + self.ready_2 == 2 and self.ready_3 == 0
-            self.ready_3 = 1
+        assert self.ready_status == tag - 1
+        self.ready_status = tag
 
 
 class Clue(models.Model):
@@ -152,3 +143,12 @@ class PlayerClue(models.Model):
         db_table = 'Player_Clue_Relationship'
 
 
+class Dialogue(models.Model):
+    dialogue_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
+    content = models.CharField(max_length=500, default='')
+
+    room = models.ForeignKey(Room, related_name='dialogue_room', on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, related_name='dialogue_player', on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        db_table = 'Dialogue'
