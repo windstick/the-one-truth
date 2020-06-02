@@ -113,6 +113,7 @@ class Player(models.Model):
     def ready(self, tag):
         assert self.ready_status == tag - 1
         self.ready_status = tag
+        self.save()
 
 
 class Clue(models.Model):

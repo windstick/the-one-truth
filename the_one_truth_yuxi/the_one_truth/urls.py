@@ -36,5 +36,6 @@ urlpatterns = [
     path('check_clue/',bv.check_clue),
     path('refresh_clue/',bv.refresh_clue),
     path('public_clue/',bv.public_clue),
-    path('send_message/', bv.send_msg)
+    path('send_message/', bv.send_msg),
+    path('synchronize/', bv.synchronize)
 ]

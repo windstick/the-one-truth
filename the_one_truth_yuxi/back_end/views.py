@@ -584,3 +584,40 @@ def send_msg(request):
             response['error_num'] = 1
             response['msg'] = error
         return JsonResponse(response)
+
+
+def synchronize(request):
+    if request.method == 'POST':
+        response = {}
+        error = None
+        req = json.loads(request.body)
+        room_id = req['room_id']
+        player_id = req['player_id']
+        ready_tag = req['ready_tag']
+
+        room = models.Room.objects.get(room_id=room_id)
+        player = models.Player.objects.get(player_id=player_id, room_id=room_id)
+
+        if not room:
+            error = 'no such room'
+        elif not player:
+            error = 'no such player'
+        else:
+            assert player.ready_status == ready_tag - 1
+            player.ready(ready_tag)
+            player_list = models.Player.objects.filter(room_id=room_id)
+
+            ready_list = [ply for ply in player_list if ply.ready_status >= ready_tag]
+        
+        if error is None:
+            data = {
+                'player_num': len(player_list),
+                'ready_player_num': len(ready_list)
+            }
+            response['error_num'] = 0
+            response['data'] = data
+        else:
+            response['error_num'] = 1
+            response['msg'] = error
+        return JsonResponse(response)
+
