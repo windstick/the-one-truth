@@ -84,6 +84,7 @@ export default {
       selectedCriminal:0,
       trueCriminal:0,
       movementPoint:2,
+      info:{},
       roles:[
         {id:0,name:'张三'},
         {id:1,name:'李四'},
@@ -139,15 +140,39 @@ export default {
     }
   },
   mounted () {
-    /*
-    const  _this = this
-    this.$axios
+    /* this.$axios
       .get('/site/info.json')
-      .then(response => (this.background = response))
+      .then(response => (this.task = response))
       .catch(function (error) { // 请求失败处理
         console.log(error);
       });
       */
+    this.axios({
+        method: 'post',
+        url: '/send_message/',
+        data:{
+        
+        //num_person:2
+        //group_id:0,
+        //is_master:0,
+        room_id:1,
+        //role_id:0,
+        player_id:0,
+        message:"msg2"
+        //player_id:0,
+        //ready_tag:1      
+        //username:'user1',
+        //script_title:'a_test_script_title'
+        //name:"user1"
+        //name:'user1'
+        //password:'1234567',
+        //mail:'5432154321@pku.edu.cn'
+        }
+      })
+      .then(response => (this.task = response.data ,this.background=response.data.name,console.log(response.data)));
+      console.log(1)
+
+      
   },
   created(){
       console.log(this.$route.params)
