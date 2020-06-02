@@ -129,8 +129,9 @@ class Clue(models.Model):
 
     def show_clue(self):
         return {
-            'script id': self.script_id,
-            'clue info': self.clue_description
+            'clue_id': self.clue_id,
+            'text': self.text,
+            'description': self.clue_description
         }
 
 
