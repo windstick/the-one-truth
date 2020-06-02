@@ -25,9 +25,10 @@ class User(models.Model):
         user_info = {
             'name': self.name,
             'email': self.email,
-            'register date': self.register_date,
-            'user group': self.get_group_type(),
-            'friend list': self.get_friend_list()
+            'register_time': self.register_date,
+            'last_login_time': self.last_login_time,
+            'group_name': self.get_group_type(),
+            'friend_list': self.get_friend_list()
         }
         return user_info
 
@@ -52,12 +53,11 @@ class Script(models.Model):
     
     def show_script_info(self):
         script_info = {
-            'title': self.title,
-            'player number': self.player_num,
+            'script_tittle': self.title,
+            'player_num number': self.player_num,
+            'truth': self.truth,
             'description': self.description,
-            'auther name': self.author_name,
-            'history scripts': self.get_history_scripts(),
-            'add time': self.add_time
+            'murder': self.murder_id
         }
         return script_info
 
@@ -114,6 +114,14 @@ class Player(models.Model):
         assert self.ready_status == tag - 1
         self.ready_status = tag
         self.save()
+    
+    def show_role_info(self):
+        return {
+            'player_id': self.player_id, 'name': self.user.name,
+            'role_id': self.role_id, 'role_name': self.role.role_name,
+            'background': self.role.background, 'timeline': self.role.timeline,
+            'task': self.role.task, 'is_murder': self.role.is_murder
+        }
 
 
 class Clue(models.Model):
@@ -129,8 +137,8 @@ class Clue(models.Model):
 
     def show_clue(self):
         return {
-            'clue_id': self.clue_id,
             'text': self.text,
+            'clue_id': self.clue_id,
             'description': self.clue_description
         }
 

@@ -135,9 +135,7 @@ def get_friend_list_request(request):
         user = models.User.objects.filter(name=username).first()
         friend_list = user.get_friend_list()
         friend_name_list = [friend.name for friend in friend_list]
-        data = {
-            'friend_list': friend_name_list,
-        }
+        data = {'friend_list': friend_name_list}
         response['data'] = data
     return JsonResponse(response)
 
@@ -333,13 +331,7 @@ def upsend_script(request):
 
         if error is None:
             sc = models.Script.objects.filter(script_id=sc_id).first()
-            data = {
-                "script_tittle": sc.title,
-                "player_num": sc.player_num,
-                "truth": sc.truth,
-                "description": sc.description,
-                "murder": sc.murder_id
-            }
+            data = sc.show_script_info()
             response['data'] = data
         return JsonResponse(response)
 
@@ -587,17 +579,9 @@ def start_game(request):
                 murder_role = models.Role.objects.get(script=script, is_murder=1)
 
                 player_list = models.Player.objects.filter(room=room)
-                role_info = [
-                    {'player_id': player.player_id, 'name': player.user.name, 
-                     'role_id': player.role_id, 'role_name': player.role.role_name,
-                     'background': player.role.background, 'timeline': player.role.timeline,
-                     'task': player.role.task, 'is_murder': player.role.is_murder} for player in player_list
-                ]
+                role_info = [player.show_role_info() for player in player_list]
 
-                clue_info = [
-                    {'text': clue.text, 'clue_id': clue.clue_id, 
-                     'description': clue.clue_description} for clue in clue_list
-                ]
+                clue_info = [clue.show_clue() for clue in clue_list]
         
         if error is None:
             room.stage = 1
@@ -630,8 +614,8 @@ def check_clue(request):
             role: string (role_name)
         }
         clue_info: {
-            clue_id: int
             text: string
+            clue_id: int
             description: string
         }
     }
@@ -661,7 +645,7 @@ def check_clue(request):
         if error is None:
             data = {
                 'clue_owner': {'player_id': find_player.player_id, 'role': role.role_name},
-                'clue_info': {'clue_id': clue.clue_id, 'text': clue.text, 'description': clue.clue_description}
+                'clue_info': find_clue.show_clue()
             }
             response['error_num'] = 0
         else:
@@ -764,11 +748,10 @@ def public_clue(request):
             for cpc in cur_player_clue:
                 cpc.is_public = 1
                 cpc.save()
-            data = cur_player_clue[0].show_clue()
-
+        
         if error is None:
             response['error_num'] = 0
-            response['data'] = data
+            response['data'] = cur_player_clue[0].show_clue()
         else:
             response['error_num'] = 1
             response['msg'] = error

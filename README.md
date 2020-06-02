@@ -206,8 +206,8 @@
             role: str (role_name)
         }
         clue_info: {
-            clue_id: int
             text: str
+            clue_id: int
             description: str
         }
     }
