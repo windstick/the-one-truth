@@ -2,7 +2,7 @@
 
 #### 服务器端接口说明
 
-1. register：注册
+1. ***register***：注册
 
     ```python
     Input: {
@@ -19,7 +19,7 @@
     }
     ```
 
-2. login：登录
+2. ***login***：登录
 
     ```python
     Input: {
@@ -33,7 +33,7 @@
     }
     ```
     
-3. get_friends_list：获取好友列表
+3. ***get_friends_list***：获取好友列表
 
     ```python
     Input: {
@@ -44,7 +44,7 @@
     }
     ```
     
-4. add_friend_request：添加好友请求
+4. ***add_friend_request***：添加好友请求
 
     ```python
     Input: {
@@ -53,7 +53,7 @@
     }
     ```
     
-5. delete_friend_request：删除好友请求
+5. ***delete_friend_request***：删除好友请求
 
     ```python
     Input: {
@@ -62,7 +62,7 @@
     }
     ```
     
-6. init_room：创建房间
+6. ***init_room***：创建房间
 
     ```python
     Input: {
@@ -74,7 +74,7 @@
     }
     ```
 
-7. upsend_script
+7. ***upsend_script***：上传自定义剧本
 
     ```python
     Input: {
@@ -109,7 +109,7 @@
     }
     ```
 
-8. enter_room：进入房间
+8. ***enter_room***：进入房间
 
     ```python
     Input: {
@@ -129,7 +129,7 @@
     }
     ```
     
-9. exit_room：离开房间
+9. ***exit_room***：离开房间
 
     ```python
     Input: {
@@ -150,7 +150,7 @@
     }
     ```
     
-10. room_owner_choose_script：房主选择剧本
+10. ***room_owner_choose_script***：房主选择剧本
 
     ```python
     Input: {
@@ -159,7 +159,7 @@
     }
     ```
     
-11. start_game：开始游戏
+11. ***start_game***：开始游戏
 
     ```python
     Input: {
@@ -192,7 +192,7 @@
     }
     ```
     
-12. check_clue：玩家查看线索
+12. ***check_clue***：玩家查看线索
 
     ```python
     Input: {
@@ -213,7 +213,7 @@
     }
     ```
     
-13. refresh_clue：更新线索发现信息
+13. ***refresh_clue***：更新线索发现信息
 
     ```python
     Input: {
@@ -235,7 +235,7 @@
     ]
     ```
     
-14. public_clue：公开线索
+14. ***public_clue***：公开线索
 
     ```python
     Input: {
@@ -249,7 +249,7 @@
     }
     ```
     
-15. send_message：聊天
+15. ***send_message***：聊天
 
     ```python
     Input: {
@@ -267,7 +267,7 @@
     ]
     ```
     
-16. synchronize：玩家游戏状态更新与同步
+16. ***synchronize***：玩家游戏状态更新与同步
 
     ```python
     Input: {
