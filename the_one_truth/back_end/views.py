@@ -630,14 +630,18 @@ def check_clue(request):
         # check if clue id is correct
         find_clue = models.Clue.objects.filter(clue_id=clue_id)
         find_player = models.Player.objects.filter(room_id=room_id, role_id=role_id)
+        potential_clue = models.PlayerClue.objects.filter(clue_id=clue_id)
+        
         if not find_clue:
             error = 'No such clue'
         elif not find_player:
             error = 'No such player'
+        elif any([clue.player.room_id == room_id for clue in potential_clue] + [False]):
+            error = 'this clue has already been found by others in this room !'
         else:
             role = models.Role.objects.get(role_id=role_id)
-            find_player = find_player[0]
-            find_clue = find_clue[0]
+            find_player = find_player.first()
+            find_clue = find_clue.first()
             models.PlayerClue(is_public=0, player_id=find_player.player_id, clue_id=clue_id).save()
 
         if error is None:
@@ -691,12 +695,12 @@ def refresh_clue(request):
                 # get player_clue
                 clue_id = clue.clue_id
                 player_clue = models.PlayerClue.objects.filter(clue_id=clue_id)
+                player_clue = [pc for pc in player_clue if pc.player.room_id == room_id]
                 # if no owner
                 if not player_clue:
                     owner_role_id = None
                     is_open = 0
                 else:
-                    player_clue = player_clue
                     owner_list = [
                         {'role_id': pc.player.role_id, 'player_id': pc.player_id} for pc in player_clue
                     ]
