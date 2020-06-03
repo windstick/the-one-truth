@@ -211,10 +211,35 @@ def delete_friend_request(request):
     return JsonResponse(response)
 
 
+def get_room_master(request):
+    if request.method == 'POST':
+        response = {}
+        error = None
+        req = json.loads(request.body)
+        room_id = req['room_id']
+        room = models.Room.objects.filter(room_id=room_id).first()
+
+        if not room:
+            error = 'no such room'
+        else:
+            player = models.Player.objects.filter(room_id=room_id, is_master=1).first()
+        
+        if error is None:
+            response['error_code'] = 0
+            data = {'id':int(player.player_id), 'id_in_room':int(player.player_room_id), 'name':player.user.name}
+            response['data'] = data
+        else:
+            response['error_code'] = 1
+            response['msg'] = error
+        return JsonResponse(response)
+
+
+
 def init_room(request):
     """
     Input: {
         num_person: int
+        username: str
     }
     Output['data']: {
         room_id: int
@@ -225,6 +250,16 @@ def init_room(request):
             }
             ...
         ]
+        room_size: int
+        player_list: [
+            {
+                id: int (player_id)
+                name: string (username)
+            }
+            ...
+        ]
+        master_name: str
+        start: bool
     }
     """
     if request.method == 'POST':
@@ -232,16 +267,40 @@ def init_room(request):
         error = None
         req = json.loads(request.body)
         num_person = req['num_person']
+        username = req['username']
+        user = models.User.objects.filter(name=username).first()
 
         if num_person < 2:
             error = 'at least 2 persons in a room'
-        else:        
-            room_id = 0
-            room = models.Room.objects.filter(room_id=room_id).first()
-            while room:
-                room_id += 1
-                room = models.Room.objects.filter(room_id=room_id).first()        
-            room = models.Room.objects.create(room_id=room_id, size=num_person, stage=0, script=None)
+        elif not user:
+            error = 'no such user'
+        else:
+            player = models.Player.objects.filter(user_id=user._id).first()
+            if not player:
+                room_id = 0
+                room = models.Room.objects.filter(room_id=room_id).first()
+                while room:
+                    room_id += 1
+                    room = models.Room.objects.filter(room_id=room_id).first()        
+                room = models.Room.objects.create(room_id=room_id, size=num_person, stage=0, script=None)
+
+                player_id = 0
+                player = models.Player.objects.filter(player_id=player_id).first()
+                while player:
+                    player_id += 1
+                    player = models.Player.objects.filter(player_id=player_id).first()
+
+                player_list = models.Player.objects.filter(room_id=room_id) 
+                player_room_id_list = [player.player_room_id for player in player_list]
+                player_room_id = [i not in player_room_id_list for i in range(len(player_list))] + [True]
+
+                player = models.Player.objects.create(player_id=player_id, user_id=user._id, 
+                                                      room_id=room_id, role=None, 
+                                                      player_room_id=player_room_id.index(True),
+                                                      is_master=1)
+            else:
+                error = username + ' has already entered another room, please exit first'
+                
 
         if error is None:
             script = models.Script.objects.filter(player_num=num_person)
@@ -249,7 +308,11 @@ def init_room(request):
             response['error_code'] = 0
             data = {
                 "room_id": int(room_id),
-                "script_to_select": script_info
+                "script_to_select": script_info,
+                "room_size": room.size,
+                "player_list":  [{'id':int(player.player_id), 'id_in_room':int(player.player_room_id), 'name':player.user.name}],
+                "master_name": username,
+                "start": False
             }
             response['data'] = data
         else:
@@ -363,6 +426,33 @@ def upsend_script(request):
         return JsonResponse(response)
 
 
+def get_user_room(request):
+    if request.method == 'POST':
+        response = {}
+        error = None
+        req = json.loads(request.body)
+        username = req['username']
+        user = models.User.objects.filter(name=username).first()
+
+        if not user:
+            error = 'no such user'
+        else:
+            player = models.Player.objects.filter(user=user).first()
+            
+            room_id = None if not player else int(player.room_id)
+        
+        if error is None:
+            response['error_code'] = 0
+            data = {
+                "room_id":room_id
+            }
+            response['data'] = data
+        else:
+            response['error_code'] = 1
+            response['msg'] = error
+        return JsonResponse(response)
+
+
 def enter_room(request):
     """
     Input: {
@@ -388,7 +478,6 @@ def enter_room(request):
         req = json.loads(request.body)
         username = req['username']
         room_id = req['room_id']
-        is_master = req['is_master']
         user = models.User.objects.filter(name=username).first()
         room = models.Room.objects.filter(room_id=room_id).first()
 
@@ -400,8 +489,6 @@ def enter_room(request):
             player_list = models.Player.objects.filter(room_id=room_id)
             if len(player_list) == room.size:
                 error = 'no seats left in this room'
-            elif is_master and models.Player.objects.filter(room_id=room_id, is_master=1):
-                error = 'this room already has its master'
             else:
                 player = models.Player.objects.filter(user_id=user._id).first()
                 if not player:
@@ -415,7 +502,7 @@ def enter_room(request):
                     player = models.Player.objects.create(player_id=player_id, user_id=user._id, 
                                                           room_id=room_id, role=None, 
                                                           player_room_id=player_room_id.index(True),
-                                                          is_master=is_master)
+                                                          is_master=0)
                 elif player.room_id != room_id:
                     error = username + ' has already entered another room, please exit first'
                     
@@ -456,8 +543,6 @@ def exit_room(request):
     Input: {
         username: string
         room_id: int
-        is_master: int
-        next_master_name: string (PS: need to give only if is_master == 1)
     }
     Output['data']: {
         player_list: [
@@ -477,7 +562,6 @@ def exit_room(request):
         req = json.loads(request.body)
         username = req['username']
         room_id = req['room_id']
-        is_master = req['is_master']    ## TODO: add this request
 
         user = models.User.objects.filter(name=username).first()
         room = models.Room.objects.filter(room_id=room_id).first()
@@ -491,22 +575,7 @@ def exit_room(request):
         
             if not this_player:
                 error = username + ' is not in this room'
-            elif this_player.is_master != is_master:
-                error = username + ' is not the master ' if is_master else username + ' is the master'
-                is_master = this_player.is_master
-            elif is_master and len(player_list) > 1:
-                if 'next_master_name' not in req:
-                    error = 'there exists other player(s) in this room, please select one to be master'
-                else:
-                    next_master_name = req['next_master_name']
-                    next_user = models.User.objects.filter(name=next_master_name).first()
-                    if not next_user:
-                        error = 'user ' + next_master_name + ' does not exist' 
-                    else:
-                        next_player = models.Player.objects.filter(room_id=room_id, user_id=next_user._id).first()
-                        if not next_player:
-                            error = next_master_name + ' is not in this room'
-        
+       
         if not error:
             if len(player_list) == 1:
                 this_player.delete()
@@ -514,8 +583,10 @@ def exit_room(request):
                 room.delete()
                 player_list = []
             else:
+                is_master = this_player.is_master
                 this_player.delete()
                 if is_master:
+                    next_player = models.Player.objects.filter(room_id=room_id).first()
                     next_player.is_master = 1
                     next_player.save()
                 player_list = models.Player.objects.filter(room_id=room_id)

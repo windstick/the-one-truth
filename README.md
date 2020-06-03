@@ -66,6 +66,7 @@
 
     ```python
     Input: {
+        username: str
         num_person: int
     }
     Output['data']: {
@@ -77,6 +78,17 @@
             }
             ...
         ]
+        room_size: int
+        player_list: [
+            {
+                id: int (player_id)
+                id_in_room: int
+                name: str (username)
+            }
+            ...
+        ]
+        master_name: str (or null)
+        start: bool
     }
     ```
 
@@ -122,7 +134,6 @@
     Input: {
         username: str
         room_id: int
-        is_master: int
     }
     Output['data']: {
         room_size: int
@@ -145,8 +156,6 @@
     Input: {
         username: str
         room_id: int
-        is_master: int
-        next_master_name: str (PS: need to give only if is_master == 1)
     }
     Output['data']: {
         player_list: [
@@ -311,4 +320,27 @@
         }
     }
     ```
-    
+
+17. ***get_user_room***：获取用户当前所在房间
+
+    ```python
+    Input: {
+        username: str
+    }
+    Output['data]: {
+        room_id: int (or null)
+    }
+    ```
+
+18. ***get_room_master***：获取房间房主信息
+
+    ```python
+    Input: {
+        room_id: int
+    }
+    Output['data']: {
+        id: int (player_id)
+        id_in_room: int
+        name: str (username)
+    }
+    ```
