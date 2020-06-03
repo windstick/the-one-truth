@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <button @click="chooseScript(chosen_script_index)">确定选取剧本</button>
+    <el-button @click="chooseScript(chosen_script_index)">确定选取剧本</el-button>
   </div>
 </template>
 

@@ -27,7 +27,7 @@ export default {
 <style>
   #banner {
     background-color: white;
-    box-shadow: 0 7px 5px rgba(32, 32, 32, 0.3);
+    box-shadow: 0 1px 5px rgba(32, 32, 32, 0.15);
     display: flex;
     justify-content: flex-end;
     text-align: center;

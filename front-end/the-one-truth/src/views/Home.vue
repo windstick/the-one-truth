@@ -1,9 +1,25 @@
 <template>
   <div id="home">
     <Banner id="banner">
-      <div v-show="User.logIn" class="banner_item" @click="roomClick">当前房间</div>
-      <div class="banner_item" @click="scriptsClick">剧本</div>
-      <div v-if="User.logIn" class="banner_item" @click="profileClick">用户</div>
+      <router-link v-if="User.logIn" to="/home/room">
+        <div class="banner_item">
+          当前房间
+        </div>
+      </router-link>
+
+      <router-link to="/home/scripts">
+        <div class="banner_item">
+          剧本
+        </div>
+      </router-link>
+
+      <router-link v-if="User.logIn" to="/home/profile">
+        <div class="banner_item">
+          用户
+        </div>
+      </router-link>
+      
+      
       <div v-if="!User.logIn" class="banner_item">登录</div>
       <div v-if="!User.logIn" class="banner_item">注册</div>
     </Banner>
@@ -30,7 +46,7 @@ export default {
           user_id: 0,
           name: "user0",
           passwd: "",
-          friend_list: ['user1', 'user2', 'user3', 'user4']
+          friend_list: [{name: 'user1'}, {name: 'user2'}, {name: 'user3'}, {name: 'user4'}]
       }
     }
   },
@@ -52,14 +68,9 @@ export default {
 </script>
 
 <style>
-  #home{
-    background-color: rgba(246, 249, 255);
-  }
-/*
   #main{
-    padding: 50px 0
+    padding: 16px;
   }
-  */
 
   .banner_item {
     margin: 0 10px 0 10px;
@@ -69,4 +80,15 @@ export default {
     text-align: center;
     line-height: 50px;
   }
+
+  .router-link-active {
+    text-decoration: none;
+    background-color: rgba(240, 242, 245);
+  }
+
+  .router-link{
+    text-decoration: none;
+  }
+
+
 </style>

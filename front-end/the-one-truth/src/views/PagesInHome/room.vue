@@ -1,35 +1,36 @@
 <template>
   <div id="room">
     <div id="tableContainer">
-      <div id="tableRow">
-        <div id="friendList">
-          <h1>好友列表</h1>
-          <table>
-            <tr v-for="item in User.friend_list">{{item}}</tr>
-          </table>
-        </div>
+      <el-row :gutter="32">
+        <el-col :xs="24" :sm="24" :lg="8">
+          <div class="col-wrapper">
+            <h1>好友列表</h1>
+            <FriendTable :friend_list="User.friend_list"/>
+          </div>
 
-        <component :is="currentComponent" id="roomCreateBar" :created="roomSession.created"
-                   :available_scripts="availableScripts" @createRoom="createRoom"
-                   @joinRoom="joinRoom" @chooseScript="chooseScript"> </component>
-        <!---router-view id="roomCreateBar" :created="roomSession.created" @createRoom="createRoom"
-                                                                       @joinRoom="joinRoom"
-                                        :available_scripts="availableScripts"
-                                                                       @chooseScript="chooseScript"
-                                        ></router-view--->
+        </el-col>
 
-        
-        <div id="playerInRoom">
-          <h1>房间内玩家</h1>
-          <p v-show="!roomSession.created">还没有加入房间</p>
-          <table v-show="roomSession.created">
-            <tr v-for="item in roomSession.player_list">{{item}}</tr>
-          </table>
-        </div>
-      </div>
+        <el-col :xs="24" :sm="24" :lg="8">
+          <div class="col-wrapper">
+          <component :is="currentComponent" :created="roomSession.created"
+                      :available_scripts="availableScripts" @createRoom="createRoom"
+                      @joinRoom="joinRoom" @chooseScript="chooseScript"> </component>
+          </div>
+        </el-col>
+
+        <el-col :xs="24" :sm="24" :lg="8">
+          <div class="col-wrapper">
+            <h1>房间内玩家</h1>
+            <p v-show="!roomSession.created">还没有加入房间</p>
+            <table v-show="roomSession.created">
+              <tr v-for="item in roomSession.player_list">{{item}}</tr>
+            </table>
+          </div>
+        </el-col>
+      </el-row>
     </div>
 
-    <button id="enterGame" v-if="ready" @click="enterGame">进入游戏</button>
+    <el-button id="enterGame" v-if="ready" @click="enterGame">进入游戏</el-button>
   </div>
 </template>
 
@@ -37,18 +38,22 @@
 <script>
 import CreateOrJoinRoom from "../../components/CreateOrJoinRoom"
 import SelectScript from "../../components/SelectScript"
-
+import FriendTable from "../../components/FriendTable"
 
 export default {
   name: 'room',
-  components: {},
+  components: {
+    SelectScript,
+    CreateOrJoinRoom,
+    FriendTable
+  },
   data() {
         return {
           roomSession : {
             room_id: 0,
             player_list: [],
             size: 1,
-            choosen_script: false,
+            choose_script: false,
             chosen_script_id: -1,
             created: false,
             user_id: 0
@@ -56,14 +61,11 @@ export default {
           availableScripts: []
         }
   },
-  components: {
-    SelectScript,
-    CreateOrJoinRoom
-  },
   computed: {
     ready(){
       // return true;
-      return this.roomSession.player_list.length === this.roomSession.size && this.roomSession.choose_script;
+      console.log(this.roomSession.choose_script)
+      return (this.roomSession.player_list.length === this.roomSession.size) && this.roomSession.choose_script;
     },
     currentComponent(){
       if(this.roomSession.created)
@@ -87,7 +89,7 @@ export default {
   },
   methods: {
     createRoom(roomsize){
-      console.log('creating room');
+      // console.log('creating room');
       // 请求房间id（轮询一直到成功为止）
       this.roomSession.size = roomsize;
       this.roomSession.room_id = 102;
@@ -109,17 +111,17 @@ export default {
           script_id: 1
         }
       ]
-      console.log('room created');
+      // console.log('room created');
     },
     joinRoom(roomid){
-      console.log('joining room');
+      // console.log('joining room');
       // 向服务器查询特定房间是否存在，存在则继续
       this.roomSession.room_id = 102;
       this.roomSession.player_list = ['user0', 'user1'];
       // 更新房间状态
       this.roomSession.created = true;
-      console.log('room created');
-      console.log(this.roomSession.player_list);
+      // console.log('room created');
+      // console.log(this.roomSession.player_list);
     },
     chooseScript(id){
       this.roomSession.choose_script = true;
@@ -144,33 +146,14 @@ export default {
 
 
 <style>
-  #tableContainer{
-    display: table;
-    margin: 50px 0;
-  }
-  #tableRow{
-    display: table-row;
+
+  .col-wrapper{
+    background: #fff;
+    padding: 5px 16px 16px 16px;
+    margin-bottom: 32px;
+    border: 1px solid #e1e2e5;
     text-align: center;
-    background-color: white;
-  }
-
-  #friendList{
-    display: table-cell;
-    width: 500px;
-  }
-
-  #roomCreateBar{
-    display: table-cell;
-    width: 500px;
-  }
-
-  #playerInRoom{
-    display: table-cell;
-    width: 500px;
-  }
-
-  #room{
-    text-align: center;
+    border-radius: 8px;
   }
 
 </style>

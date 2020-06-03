@@ -1,17 +1,19 @@
 <template>
-  <div>
+  <div id="createorjoin">
     <h1>创建或者加入房间</h1>
     <h2>创建房间</h2>
     <label for="createsize">创建房间的大小</label>
-      <input type="number" id="createsize" v-model.number="roomSize"></input>
+      <el-input type="number" id="createsize" v-model.number="roomSize"
+        style="margin: 10px 0px;"></el-input>
     <br/>
-    <button id="create" @click="createRoom">创建房间</button>
+    <el-button id="create" @click="createRoom">创建房间</el-button>
 
     <h2>加入房间</h2>
     <label for="roomid">加入房间的编号</label>
-      <input type="number" id="roomid" v-model.number="roomId"></input>
+      <el-input type="number" id="roomid" v-model.number="roomId"
+       style="margin: 10px 0px;"></el-input>
     <br/>
-    <button id="join" @click="joinRoom">加入房间</button>
+    <el-button id="join" @click="joinRoom">加入房间</el-button>
   </div>
 </template>
 
