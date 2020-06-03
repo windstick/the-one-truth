@@ -18,7 +18,7 @@ export default {
   methods: {
     iconClick()
     {
-      this.$router.push('/home/loggedout')
+      this.$router.push('/home')
     }
   }
 }

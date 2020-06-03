@@ -80,6 +80,7 @@ export default {
       // alert('login')
       this.$store.commit('user/logIn')
       this.$store.commit('user/setName', this.loginForm.username)
+      this.$store.dispatch("user/updateFriendListFromNetwork")
       this.$router.push("/home")
     }
   }

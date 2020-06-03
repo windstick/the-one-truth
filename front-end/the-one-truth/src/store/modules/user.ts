@@ -1,7 +1,7 @@
 import {request} from '@/network/request'
 
 const state = {
-    login: true,
+    login: false,
     user_id: 0,
     name: "Ivy",
     passwd: "psIvywd",

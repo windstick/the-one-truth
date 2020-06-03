@@ -7,8 +7,9 @@ const Profile = () => import('../views/PagesInHome/Profile.vue')
 const Scripts = () => import('../views/PagesInHome/Scripts.vue')
 const LoggedOut = () => import('../views/PagesInHome/LoggedOut.vue')
 
-const Game = () => import('../views/Game.vue')
+const Game = () => import('../views/game.vue')
 const Login = () => import('../views/Login.vue')
+const Dashboard = () => import('../views/Dashboard.vue')
 
 const CreateOrJoin = () => import('../components/CreateOrJoinRoom.vue')
 const SelectScript = () => import('../components/SelectScript.vue')
@@ -27,13 +28,18 @@ const routes: Array<RouteConfig> = [
   {
     path: '/home',
     component: Home,
+    redirect: '/home/dashboard',
     children: [
       {
-        path: '',
-        name: 'Home',
-        // 先路由到loggedout，然后loggedout检查登陆状态
-        redirect: 'loggedout'
+        path: 'dashboard',
+        component: Dashboard
       },
+      // {
+      //   path: '',
+      //   name: 'Home',
+      //   // 先路由到loggedout，然后loggedout检查登陆状态
+      //   redirect: 'loggedout'
+      // },
       {
         path: 'profile',
         component: Profile

@@ -19,9 +19,13 @@
         </div>
       </router-link>
       
-      
-      <div v-if="!User.logIn" class="banner_item">登录</div>
-      <div v-if="!User.logIn" class="banner_item">注册</div>
+      <router-link v-if="!User.logIn" to="/login">
+        <div class="banner_item">登录</div>
+      </router-link>
+
+      <router-link v-if="!User.logIn" to="/login">
+        <div v-if="!User.logIn" class="banner_item">注册</div>
+      </router-link>
     </Banner>
 
     <keep-alive include="room">
@@ -74,6 +78,14 @@ export default {
     height: 50px;
     text-align: center;
     line-height: 50px;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  a:visited{
+    color: rgba(30, 30, 30)
   }
 
   .router-link-active {

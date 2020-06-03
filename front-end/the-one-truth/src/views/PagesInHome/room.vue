@@ -25,9 +25,14 @@
           <div class="col-wrapper">
             <h1>房间内玩家</h1>
             <p v-show="!roomSession.created">还没有加入房间</p>
-            <table v-show="roomSession.created">
+            <!---table v-show="roomSession.created">
               <tr v-for="item in roomSession.player_list">{{item}}</tr>
-            </table>
+            </table--->
+            <el-table :data="roomSession.player_list" style="width: 100%; padding-top: 15px;">
+              <el-table-column label="用户id" min-width="100" prop="id"/>
+              <el-table-column label="玩家身份" min-width="100" prop="id_in_room"/>
+              <el-table-column label="用户名称" min-width="100" prop="name"/>
+            </el-table>
             <el-button @click="updatePlayerList" style="margin-top:10px;"> update playerlist </el-button>
           </div>
         </el-col>
@@ -35,7 +40,7 @@
     </div>
 
     <div style="text-align: center;">
-      <el-button id="enterGame" v-if="ready" @click="enterGame" >进入游戏</el-button>
+      <el-button id="enterGame" v-if="ready" type="primary" @click="enterGame" >进入游戏</el-button>
     </div>
   </div>
 </template>
@@ -118,7 +123,7 @@ export default {
         this.player_id = 0
         this.roomSession.size = roomsize
         this.roomSession.room_id = msg.data.room_id
-        this.roomSession.player_list = [this.User.name]
+        this.roomSession.player_list = [{id: this.User.id, id_in_room: 0, name: this.User.name}]
         this.ismaster = true
         this.availableScripts = msg.data.script_to_select.map(function(n){
           return {
@@ -160,6 +165,17 @@ export default {
           this.roomSession.choose_script = (msg.data.script_id != null)
           this.roomSession.chosen_script_id = msg.data.script_id
           // console.log("ismaster: " + this.ismaster)
+
+          // 取player_id
+          for(let i = 0; i < msg.data.player_list.length; ++i)
+          {
+            if(msg.data.player_list[i].name == this.User.name)
+            {
+              this.player_id = msg.data.player_list[i].id_in_room
+              break
+            }
+          }
+          console.log("playerid: " + this.player_id)
         }
         
       }).catch(err =>{
@@ -205,7 +221,7 @@ export default {
         path: '/game',
         query: {
           script_id: 0, // 目前后端不会用到，需要记录一下
-          player: this.palyer_id,
+          player: this.player_id,
           room_id: this.roomSession.room_id
         }
       })
@@ -233,6 +249,16 @@ export default {
           this.roomSession.choose_script = (msg.data.script_id != null)
           this.roomSession.chosen_script_id = msg.data.script_id
 
+          // 取player_id
+          for(let i = 0; i < msg.data.player_list.length; ++i)
+          {
+            if(msg.data.player_list[i].name == this.User.name)
+            {
+              this.player_id = msg.data.player_list[i].id_in_room
+              break
+            }
+          }
+          console.log("playerid: " + this.player_id)
         }
       }).catch(err =>{
         console.log(err)
