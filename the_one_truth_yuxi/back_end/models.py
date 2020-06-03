@@ -7,10 +7,10 @@ class User(models.Model):
     password = models.CharField(max_length=20)
     email = models.EmailField(unique=True)
     register_date = models.DateTimeField(auto_now=True)
-    last_login_time = models.DateTimeField(auto_now=True)
-    group_id = models.IntegerField(null=True)
+    last_login_time = models.DateTimeField(auto_now=True, null=True)
+    group_id = models.IntegerField(default=0)
     friend_list = models.ManyToManyField('self', symmetrical=True, null=True)
-    friend_num = models.IntegerField(null=True)
+    friend_num = models.IntegerField(default=0)
     
     class Meta:
         db_table = 'User'

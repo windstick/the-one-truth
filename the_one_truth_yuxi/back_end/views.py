@@ -8,11 +8,8 @@ import sys
 import json
 import random
 
-print(sys.path)
-
 from . import models
 
-# Create your views here.
 
 def index(request):
     return HttpResponse('Hello, world!')
@@ -35,7 +32,7 @@ def register_handler(request):
         username: string
         groupid: int
         reg_time: time
-        last_login_time: time
+        last_login_time: null
     }
     """
     if request.method == 'POST':
@@ -58,8 +55,7 @@ def register_handler(request):
         
         if not user:
             models.User.objects.create(_id=user_id, name=username, password=password, email=email,
-                                       group_id=group_id, register_date=now_time, friend_num=0,
-                                       last_login_time=now_time)
+                                       group_id=group_id, register_date=now_time, friend_num=0)
         else:
             error = 'Username has been registered.'
         if error is None:
@@ -68,7 +64,7 @@ def register_handler(request):
                 'username': username,
                 'groupid': group_id,
                 'reg_time': now_time,
-                "last_login_time": 0,
+                "last_login_time": None,
             }
             response['data'] = data
         else:
@@ -292,6 +288,8 @@ def upsend_script(request):
 
         if len(role_info) < 2:
             error = 'at least 2 roles(players) in a script'
+        elif models.Script.objects.filter(title=title):
+            error = 'script title ' + title + ' has already existed, please set another title'
         else:
             ##=== update script ===##
             sc_id = 0
@@ -558,7 +556,7 @@ def start_game(request):
         room_id = req['room_id']
         room = models.Room.objects.filter(room_id=room_id).first()
         
-        if no room:
+        if not room:
             error = 'no such room'
         else:
             script = room.script

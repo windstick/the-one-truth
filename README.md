@@ -15,7 +15,7 @@
         username: str
         groupid: int
         reg_time: time
-        last_login_time: time
+        last_login_time: null
     }
     ```
 
