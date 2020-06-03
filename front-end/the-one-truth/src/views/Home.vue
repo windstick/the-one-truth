@@ -27,6 +27,8 @@
     <keep-alive include="room">
       <router-view :User="User" id="main"></router-view>
     </keep-alive>
+
+    
   </div>
 </template>
 
@@ -39,31 +41,24 @@ export default {
   components: {
     Banner
   },
-  data(){
-    return {
-      User:  {
-          logIn: true,
-          user_id: 0,
-          name: "user0",
-          passwd: "",
-          friend_list: [{name: 'user1'}, {name: 'user2'}, {name: 'user3'}, {name: 'user4'}]
+  computed: {
+      User() {
+        // this.$store.dispatch("user/updateFriendListFromNetwork")
+        return {
+          logIn: this.$store.state.user.login,
+          user_id: this.$store.state.user.user_id,
+          name: this.$store.state.user.name,
+          passwd: this.$store.state.user.passwd,
+          friend_list: this.$store.state.user.friend_list
+        }
       }
-    }
   },
   methods: {
-    profileClick()
-    {
-      this.$router.push('/home/profile');
-    },
-    scriptsClick()
-    {
-      this.$router.push('/home/scripts');
-    },
-    roomClick()
-    {
-      this.$router.push('/home/room');
+    updateFriendList(){
+      this.$store.dispatch("user/updateFriendListFromNetwork")
     }
   }
+
 }
 </script>
 

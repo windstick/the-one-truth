@@ -6,6 +6,7 @@
           <div class="col-wrapper">
             <h1>好友列表</h1>
             <FriendTable :friend_list="User.friend_list"/>
+            <el-button @click="updateFriendList" style="margin-top:10px;"> update userlist </el-button>
           </div>
 
         </el-col>
@@ -41,6 +42,7 @@
 import CreateOrJoinRoom from "../../components/CreateOrJoinRoom"
 import SelectScript from "../../components/SelectScript"
 import FriendTable from "../../components/FriendTable"
+import {request} from '@/network/request'
 
 export default {
   name: 'room',
@@ -140,6 +142,9 @@ export default {
           player: 1
         }
       })
+    },
+    updateFriendList(){
+      this.$store.dispatch("user/updateFriendListFromNetwork")
     }
   }
 }
