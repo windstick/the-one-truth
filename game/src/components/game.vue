@@ -256,12 +256,12 @@ export default {
       
   },
   created(){
-      /*
+      
       console.log(this.$route.params)
       this.scriptid=this.$route.params.script_id
       this.player=this.$route.params.player
       this.room_id=this.$route.params.room_id
-      */
+      
   }
 }
 </script>
