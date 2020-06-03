@@ -8,6 +8,7 @@ const Scripts = () => import('../views/PagesInHome/Scripts.vue')
 const LoggedOut = () => import('../views/PagesInHome/LoggedOut.vue')
 
 const Game = () => import('../views/Game.vue')
+const Login = () => import('../views/Login.vue')
 
 const CreateOrJoin = () => import('../components/CreateOrJoinRoom.vue')
 const SelectScript = () => import('../components/SelectScript.vue')
@@ -18,6 +19,10 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     redirect: '/home'
+  },
+  {
+    path: '/login',
+    component: Login
   },
   {
     path: '/home',

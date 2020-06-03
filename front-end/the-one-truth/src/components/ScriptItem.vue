@@ -6,7 +6,9 @@
       <slot name="scriptName">这是一个剧本名称</slot>
       </span>
     </div>
-    <slot id="intro" name="intro">这里是剧本简介</slot>
+    <div id="intro">
+    <slot name="intro">这里是剧本简介</slot>
+    </div>
   </div>
 </template>
 
@@ -24,6 +26,8 @@ export default {
     margin: 10px;
     border-style: dashed;
     border-width: 5px;
+    border-color: white;
+    width: 100%;
   }
 
   #nameAndFig{
@@ -33,6 +37,11 @@ export default {
   #fig{
     flex: 0;
     height: 50px;
+  }
+
+  #intro{
+    margin: 10px 5px 10px 5px;
+    text-align: left;
   }
 
 

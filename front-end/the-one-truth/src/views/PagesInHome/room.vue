@@ -14,8 +14,10 @@
         <el-col :xs="24" :sm="24" :lg="8">
           <div class="col-wrapper">
           <component :is="currentComponent" :created="roomSession.created"
-                      :available_scripts="availableScripts" @createRoom="createRoom"
-                      @joinRoom="joinRoom" @chooseScript="chooseScript"> </component>
+                      :available_scripts="availableScripts" 
+                      :room_id="roomSession.room_id"
+                      @joinRoom="joinRoom" @chooseScript="chooseScript"
+                      @createRoom="createRoom" @exitRoom="exitRoom"> </component>
           </div>
         </el-col>
 
@@ -26,6 +28,7 @@
             <table v-show="roomSession.created">
               <tr v-for="item in roomSession.player_list">{{item}}</tr>
             </table>
+            <el-button @click="updatePlayerList" style="margin-top:10px;"> update playerlist </el-button>
           </div>
         </el-col>
       </el-row>
@@ -42,6 +45,7 @@
 import CreateOrJoinRoom from "../../components/CreateOrJoinRoom"
 import SelectScript from "../../components/SelectScript"
 import FriendTable from "../../components/FriendTable"
+import Participant from "../../components/Participant"
 import {request} from '@/network/request'
 
 export default {
@@ -49,7 +53,8 @@ export default {
   components: {
     SelectScript,
     CreateOrJoinRoom,
-    FriendTable
+    FriendTable,
+    Participant
   },
   data() {
         return {
@@ -62,18 +67,23 @@ export default {
             created: false,
             user_id: 0
           },
-          availableScripts: []
+          availableScripts: [],
+          player_id: 0,
+          is_master: false
         }
   },
   computed: {
     ready(){
       // return true;
-      console.log(this.roomSession.choose_script)
+      // console.log(this.roomSession.size)
       return (this.roomSession.player_list.length === this.roomSession.size) && this.roomSession.choose_script;
     },
     currentComponent(){
       if(this.roomSession.created)
-        return "SelectScript"
+        if(this.ismaster)
+          return "SelectScript"
+        else
+          return "Participant"
       else return "CreateOrJoinRoom"
     }
   },
@@ -95,42 +105,98 @@ export default {
     createRoom(roomsize){
       // console.log('creating room');
       // 请求房间id（轮询一直到成功为止）
-      this.roomSession.size = roomsize;
-      this.roomSession.room_id = 102;
-      this.roomSession.player_list = ['user0'];
-      // 更新房间状态
-      this.roomSession.created = true;
-
-      this.availableScripts=[
-        {
-          img: '@/assets/logo.png',
-          title: 'TestScript',
-          intro: 'This is a fun script. This is a fun script. This is a fun script. This is a fun script.',
-          script_id: 0
-        },
-        {
-          img: '@/assets/logo.png',
-          title: 'TestScript2',
-          intro: 'This is a fun script. This is a fun script. This is a fun script. This is a fun script.',
-          script_id: 1
+      request({
+        method: 'post',
+        url: '/api/init_room/',
+        data: {
+          num_person: roomsize,
+          username: this.User.name
         }
-      ]
-      // console.log('room created');
+      }).then(msg =>{
+        if(msg.error_code != 0) console.log(msg)
+        console.log(msg)
+        this.player_id = 0
+        this.roomSession.size = roomsize
+        this.roomSession.room_id = msg.data.room_id
+        this.roomSession.player_list = [this.User.name]
+        this.ismaster = true
+        this.availableScripts = msg.data.script_to_select.map(function(n){
+          return {
+            img: '@/assets/logo.png',
+            title: n.title,
+            intro: n.description,
+            script_id: 0
+          }
+        })
+        // 更新房间状态
+        this.roomSession.created = true;
+      }).catch(err =>{
+        console.log(err)
+      })
+      console.log(this.roomSession);
     },
     joinRoom(roomid){
-      // console.log('joining room');
-      // 向服务器查询特定房间是否存在，存在则继续
-      this.roomSession.room_id = 102;
-      this.roomSession.player_list = ['user0', 'user1'];
-      // 更新房间状态
-      this.roomSession.created = true;
-      // console.log('room created');
-      // console.log(this.roomSession.player_list);
+      request({
+        method: 'post',
+        url: '/api/enter_room/',
+        data: {
+          username: this.User.name,
+          room_id: roomid
+        }
+      }).then(msg => {
+        console.log(msg)
+        if(msg.error_code != 0) 
+        {
+          alert(msg.msg)
+        }
+        else{
+          this.roomSession.room_id = roomid
+          this.roomSession.size = msg.data.room_size
+          this.roomSession.created = true;
+          this.roomSession.player_list = msg.data.player_list
+          this.roomSession.roomsize = msg.data.room_size
+          this.ismaster = (msg.data.master_name == this.User.name)
+          // 判断是否选取了剧本
+          this.roomSession.choose_script = (msg.data.script_id != null)
+          this.roomSession.chosen_script_id = msg.data.script_id
+          // console.log("ismaster: " + this.ismaster)
+        }
+        
+      }).catch(err =>{
+        console.log(err)
+        alert('room doesn\'t exist')
+      })
+    },
+    exitRoom(){
+      request({
+        method: 'post',
+        url: '/api/exit_room/',
+        data: {
+          username: this.User.name,
+          room_id: this.roomSession.room_id
+        }
+      }).then(msg => {
+        this.$router.push({path:'/home/room'})
+        alert("exit success")
+      })
     },
     chooseScript(id){
+      request({
+        method: 'post',
+        url: '/api/room_owner_choose_script/',
+        data: {
+          room_id: this.roomSession.room_id,
+          script_title: this.availableScripts[id].title
+        }
+      }).then(msg=>{
+        alert('choose script ' + this.availableScripts[id].title)
+      }).catch(err=>{
+        console.log(err)
+      })
+
       this.roomSession.choose_script = true;
       this.roomSession.chosen_script_id = id;
-      console.log("ready: " + this.ready)
+      // console.log("ready: " + this.ready)
       // this.ready = true;
     },
     enterGame()
@@ -138,14 +204,60 @@ export default {
       this.$router.push({
         path: '/game',
         query: {
-          script_id: 1,//this.roomSession.chosen_script_id,
-          player: 1
+          script_id: 0, // 目前后端不会用到，需要记录一下
+          player: this.palyer_id,
+          room_id: this.roomSession.room_id
         }
       })
     },
     updateFriendList(){
       this.$store.dispatch("user/updateFriendListFromNetwork")
+    },
+    updatePlayerList(){
+      request({
+        method: 'post',
+        url: '/api/enter_room/',
+        data: {
+          username: this.User.name,
+          room_id: this.roomSession.room_id
+        }
+      }).then(msg => {
+        // console.log(msg)
+        if(msg.error_code != 0) 
+        {
+          alert(msg.msg)
+        }
+        else{
+          this.roomSession.player_list = msg.data.player_list
+          console.log(msg.data)
+          this.roomSession.choose_script = (msg.data.script_id != null)
+          this.roomSession.chosen_script_id = msg.data.script_id
+
+        }
+      }).catch(err =>{
+        console.log(err)
+        alert('room doesn\'t exist')
+      })
     }
+  },
+  created(){
+    // console.log(this.User.name)
+    // 判断当前用户是否已经在一个房间中，如果已经在一个房间中，显示对应房间的界面，需要手动退出
+    request({
+        method: 'post',
+        url: '/api/get_user_room/',
+        data: {
+          username: this.User.name
+        }
+      }).then(msg => {
+        // 判断是否在房间内
+        // console.log(this.User.name)
+        if(msg.data.room_id != null)
+        {
+          this.joinRoom(msg.data.room_id)
+        }
+        // 如果在房间内，判断是否是master
+      })
   }
 }
 

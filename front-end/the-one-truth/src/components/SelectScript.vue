@@ -1,9 +1,10 @@
 <template>
   <div>
     <h1>选取剧本</h1>
-    <h2>
-      可供选择的剧本有
-    </h2>
+    <h2>当前房间号为：{{room_id}}</h2>
+    <el-button @click="exitRoom">退出房间</el-button>
+
+    <h2>可供选择的剧本有</h2>
 
     <div id="scripts">
       <div v-for="(script, index) in available_scripts" class="script">
@@ -34,12 +35,18 @@ export default {
   },
   props:
   {
-    available_scripts: Array
+    available_scripts: Array,
+    room_id: Number,
+    is_master: Boolean
   },
   methods:{
     chooseScript(i){
       // console.log(i)
-      this.$emit('chooseScript', this.available_scripts[i].script_id);
+      this.$emit('chooseScript', i);
+    },
+    exitRoom()
+    {
+      this.$emit('exitRoom');
     }
   }
 }

@@ -13,6 +13,12 @@ const state = {
 const mutations = {
     updateFriendList(state, newFriendList){
         state.friend_list = newFriendList
+    },
+    setName(state, newName){
+        state.name = newName
+    },
+    logIn(state){
+        state.login = true
     }
 }
 
