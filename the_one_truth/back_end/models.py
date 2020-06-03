@@ -9,7 +9,7 @@ class User(models.Model):
     register_date = models.DateTimeField(auto_now=True)
     last_login_time = models.DateTimeField(auto_now=True, null=True)
     group_id = models.IntegerField(default=0)
-    friend_list = models.ManyToManyField('self', symmetrical=True, null=True)
+    friend_list = models.ManyToManyField('self', symmetrical=True)
     friend_num = models.IntegerField(default=0)
     
     class Meta:
@@ -130,7 +130,7 @@ class Clue(models.Model):
     clue_description = models.CharField(max_length=5000)
     text = models.CharField(max_length=50)
 
-    player_list = models.ManyToManyField(Player, null=True, through='PlayerClue')
+    player_list = models.ManyToManyField(Player, through='PlayerClue')
 
     class Meta:
         db_table = 'Clue'
