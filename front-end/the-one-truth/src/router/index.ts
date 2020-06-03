@@ -40,22 +40,6 @@ const routes: Array<RouteConfig> = [
       {
         path: 'room',
         component: room,
-        children: [
-          {
-            path: '',
-            redirect: 'createorjoin'
-          },
-          {
-            name: 'CreateOrJoin',
-            path: 'createorjoin',
-            component: CreateOrJoin
-          },
-          {
-            name: 'SelectScript',
-            path: 'selectscript',
-            component: SelectScript
-          }
-        ]
       },
       {
         path: 'loggedout',

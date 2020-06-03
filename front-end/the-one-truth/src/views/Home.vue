@@ -8,7 +8,9 @@
       <div v-if="!User.logIn" class="banner_item">注册</div>
     </Banner>
 
-    <router-view :User="User" id="main"></router-view>
+    <keep-alive include="room">
+      <router-view :User="User" id="main"></router-view>
+    </keep-alive>
   </div>
 </template>
 

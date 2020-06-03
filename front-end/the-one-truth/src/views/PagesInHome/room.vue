@@ -9,12 +9,14 @@
           </table>
         </div>
 
-
-        <router-view id="roomCreateBar" :created="roomSession.created" @createRoom="createRoom"
+        <component :is="currentComponent" id="roomCreateBar" :created="roomSession.created"
+                   :available_scripts="availableScripts" @createRoom="createRoom"
+                   @joinRoom="joinRoom" @chooseScript="chooseScript"> </component>
+        <!---router-view id="roomCreateBar" :created="roomSession.created" @createRoom="createRoom"
                                                                        @joinRoom="joinRoom"
                                         :available_scripts="availableScripts"
                                                                        @chooseScript="chooseScript"
-                                        ></router-view>
+                                        ></router-view--->
 
         
         <div id="playerInRoom">
@@ -33,6 +35,10 @@
 
 
 <script>
+import CreateOrJoinRoom from "../../components/CreateOrJoinRoom"
+import SelectScript from "../../components/SelectScript"
+
+
 export default {
   name: 'room',
   components: {},
@@ -47,17 +53,24 @@ export default {
             created: false,
             user_id: 0
           },
-          availableScripts: [],
-          ready: false
+          availableScripts: []
         }
   },
-  /*
+  components: {
+    SelectScript,
+    CreateOrJoinRoom
+  },
   computed: {
     ready(){
+      // return true;
       return this.roomSession.player_list.length === this.roomSession.size && this.roomSession.choose_script;
+    },
+    currentComponent(){
+      if(this.roomSession.created)
+        return "SelectScript"
+      else return "CreateOrJoinRoom"
     }
   },
-  */
   props: {
     User: {
       type: Object,
@@ -112,7 +125,7 @@ export default {
       this.roomSession.choose_script = true;
       this.roomSession.chosen_script_id = id;
       console.log("ready: " + this.ready)
-      this.ready = true;
+      // this.ready = true;
     },
     enterGame()
     {
