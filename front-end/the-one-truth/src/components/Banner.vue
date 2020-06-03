@@ -1,7 +1,7 @@
 <template>
   <div id="banner">
     <div id="det_div" @click="iconClick">
-      <img src="../assets/Home/detective.png" id="det_img"/>
+      <img src="@/assets/Home/detective.png" id="det_img"/>
       <div>The One Truth</div>
     </div>
     

@@ -9,7 +9,7 @@
       <div v-for="(script, index) in available_scripts" class="script">
         <input type="radio" :value="index" v-model="chosen_script_index">
         <scriptItem>
-          <img :src="script.img" slot="fig"/>
+          <img src="@/assets/Home/book.png" slot="fig" style="height: 30px;"/>
           <div slot="scriptName">{{script.title}}</div>
           <p slot="intro">{{script.intro}}</p>
         </scriptItem>

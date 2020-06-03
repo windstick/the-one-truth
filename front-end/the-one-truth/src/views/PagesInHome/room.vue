@@ -30,7 +30,9 @@
       </el-row>
     </div>
 
-    <el-button id="enterGame" v-if="ready" @click="enterGame">进入游戏</el-button>
+    <div style="text-align: center;">
+      <el-button id="enterGame" v-if="ready" @click="enterGame" >进入游戏</el-button>
+    </div>
   </div>
 </template>
 
@@ -99,13 +101,13 @@ export default {
 
       this.availableScripts=[
         {
-          img: '../assets/logo.png',
+          img: '@/assets/logo.png',
           title: 'TestScript',
           intro: 'This is a fun script. This is a fun script. This is a fun script. This is a fun script.',
           script_id: 0
         },
         {
-          img: '../assets/logo.png',
+          img: '@/assets/logo.png',
           title: 'TestScript2',
           intro: 'This is a fun script. This is a fun script. This is a fun script. This is a fun script.',
           script_id: 1
@@ -146,7 +148,6 @@ export default {
 
 
 <style>
-
   .col-wrapper{
     background: #fff;
     padding: 5px 16px 16px 16px;
@@ -155,5 +156,4 @@ export default {
     text-align: center;
     border-radius: 8px;
   }
-
 </style>

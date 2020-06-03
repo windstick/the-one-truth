@@ -1,8 +1,10 @@
 <template>
   <div id="item">
-    <div id="nameAndFig">
+    <div id="nameAndFig" style="margin: 10px">
       <slot name="fig" id="fig">这是一张图片</slot>
+      <span style="margin: 0 10px">
       <slot name="scriptName">这是一个剧本名称</slot>
+      </span>
     </div>
     <slot id="intro" name="intro">这里是剧本简介</slot>
   </div>
