@@ -70,7 +70,13 @@
     }
     Output['data']: {
         room_id: int
-        script_to_select: str[]
+        script_to_select: [
+            {
+                title: str
+                description: str
+            }
+            ...
+        ]
     }
     ```
 
@@ -122,6 +128,7 @@
         player_list: [
             {
                 id: int (player_id)
+                id_in_room: int
                 name: str (username)
             }
             ...
@@ -144,6 +151,7 @@
         player_list: [
             {
                 id: int (player_id)
+                id_in_room: int
                 name: str (username)
             }
             ...
@@ -174,8 +182,10 @@
         role_info: [
             {
                 player_id: int
+                player_id_in_room: int
                 name: str (username)
-                role_id: int
+                role_id: int,
+                role_id_in_script: int
                 role_name: str
                 background: str
                 timeline: str
@@ -188,6 +198,7 @@
             {
                 text: str
                 clue_id: int
+                clue_id_in_script: int
                 description: str
             }
             ...
@@ -206,11 +217,13 @@
     Output['data']: {
         clue_owner: {
             player_id: int
+            player_id_in_room: int
             role: str (role_name)
         }
         clue_info: {
             text: str
             clue_id: int
+            clue_id_in_script: int
             description: str
         }
     }
@@ -225,10 +238,13 @@
     Output['data']: [
         {
             clue_id: int
+            clue_id_in_script: int
             owner_list: [
                 {
                     role_id: int
+                    role_id_in_script: int
                     player_id: int
+                    player_id_in_room: int
                 }
                 ...
             ]
@@ -247,6 +263,7 @@
     }
     Output['data']: {
         clue_id: int
+        clue_id_in_script: int
         text: str
         description: str
     }
@@ -263,6 +280,7 @@
     Output['data']: [
         {
             player_id: int
+            player_id_in_room: int
             name: str (username)
             message: str
             send_time: time

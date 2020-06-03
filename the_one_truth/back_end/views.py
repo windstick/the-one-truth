@@ -210,7 +210,13 @@ def init_room(request):
     }
     Output['data']: {
         room_id: int
-        script_to_select: string[]
+        script_to_select: [
+            {
+                title: string
+                description: string
+            }
+            ...
+        ]
     }
     """
     if request.method == 'POST':
@@ -231,11 +237,11 @@ def init_room(request):
 
         if error is None:
             script = models.Script.objects.filter(player_num=num_person)
-            script_title = [sc.title for sc in script]
+            script_info = [{'title': sc.title, 'description': sc.description} for sc in script]
             response['error_code'] = 0
             data = {
                 "room_id": int(room_id),
-                "script_to_select": script_title
+                "script_to_select": script_info
             }
             response['data'] = data
         else:
@@ -312,12 +318,13 @@ def upsend_script(request):
 
             ##=== update role ===##        
             rl_id = 0
-            for rl_info in role_info:
+            for rl_idx, rl_info in enumerate(role_info):
                 role = models.Role.objects.filter(role_id=rl_id).first()
                 while role:
                     rl_id += 1
                     role = models.Role.objects.filter(role_id=rl_id).first()
-                role = models.Role.objects.create(role_id=rl_id, role_name=rl_info['name'], script=script, 
+                role = models.Role.objects.create(role_id=rl_id, role_name=rl_info['name'], 
+                                                  script=script, role_script_id=rl_idx,
                                                   is_murder=rl_info['is_murder'], task=rl_info['task'], 
                                                   background=rl_info['background'], timeline=rl_info['timeline'],
                                                   role_description=rl_info['role_description'])
@@ -328,13 +335,13 @@ def upsend_script(request):
 
             ##=== update clue ===##        
             cl_id = 0
-            for cl_info in clue_info:
+            for cl_idx, cl_info in enumerate(clue_info):
                 clue = models.Clue.objects.filter(clue_id=cl_id).first()
                 while clue:
                     cl_id += 1
                     clue = models.Clue.objects.filter(clue_id=cl_id).first()
                 corresponding_role = models.Role.objects.get(role_name=cl_info['role_name'], script=script)
-                clue = models.Clue.objects.create(clue_id=cl_id, script=script, text=cl_info['text'],
+                clue = models.Clue.objects.create(clue_id=cl_id, script=script, text=cl_info['text'], clue_script_id=cl_idx, 
                                                   role=corresponding_role, clue_description=cl_info['clue_description'])
                 cl_id += 1
 
@@ -396,13 +403,14 @@ def enter_room(request):
                         player_id += 1
                         player = models.Player.objects.filter(player_id=player_id).first()
                     player = models.Player.objects.create(player_id=player_id, user_id=user._id, 
-                                                          room_id=room_id, role=None,
+                                                          room_id=room_id, role=None, 
+                                                          player_room_id=len(player_list),
                                                           is_master=is_master)
                 else:
                     error = username + ' has already entered a room, please exit first'
 
             player_list = models.Player.objects.filter(room_id=room_id)        
-            player_name_list = [{'id':int(player.player_id), 'name':player.user.name} for player in player_list]
+            player_name_list = [{'id':int(player.player_id), 'id_in_room':int(player.player_room_id), 'name':player.user.name} for player in player_list]
 
             master_name = None
             master_list = [player for player in player_list if player.is_master]
@@ -513,7 +521,7 @@ def exit_room(request):
             
             response['error_code'] = 0
             data = {
-                "player_list": [{'id':int(player.player_id), 'name':player.user.name} for player in player_list],
+                "player_list": [{'id':int(player.player_id), 'id_in_room':int(player.player_room_id), 'name':player.user.name} for player in player_list],
                 "master_name": master_name,
                 "start": False
             }
@@ -692,7 +700,7 @@ def check_clue(request):
 
         if error is None:
             data = {
-                'clue_owner': {'player_id': int(find_player.player_id), 'role': role.role_name},
+                'clue_owner': {'player_id': int(find_player.player_id), 'player_id_in_room':int(fine_player.player_room_id), 'role': role.role_name},
                 'clue_info': find_clue.show_clue()
             }
             response['error_num'] = 0
@@ -748,7 +756,8 @@ def refresh_clue(request):
                     is_open = 0
                 else:
                     owner_list = [
-                        {'role_id': int(pc.player.role_id), 'player_id': int(pc.player_id)} for pc in player_clue
+                        {'role_id': int(pc.player.role_id), 'role_id_in_script': int(pc.player.role.role_script_id),
+                         'player_id': int(pc.player_id), 'player_id_in_room':int(pc.player.player_room_id)} for pc in player_clue
                     ]
                     is_open = player_clue[0].is_public
                 cur_data = {
@@ -853,7 +862,7 @@ def send_msg(request):
         if error is None:
             messages = models.Dialogue.objects.filter(room_id=room_id)
             messages = [
-                {'player_id':int(msg.player_id), 'name': msg.player.user.name, 
+                {'player_id':int(msg.player_id), 'player_id_in_room':int(msg.player.player_room_id), 'name': msg.player.user.name, 
                  'message':msg.content, 'send_time': msg.send_time} for msg in messages
             ]
             response['error_num'] = 0

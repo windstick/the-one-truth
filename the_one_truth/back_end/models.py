@@ -76,6 +76,8 @@ class Role(models.Model):
     role_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
     role_name = models.CharField(max_length=20, default='')
     script = models.ForeignKey(Script, related_name='role_script', on_delete=models.CASCADE)
+
+    role_script_id = models.DecimalField(max_digits=20, decimal_places=0)
     
     is_murder = models.IntegerField(default=0)
     task = models.CharField(max_length=200, default='')
@@ -100,6 +102,7 @@ class Role(models.Model):
 
 class Player(models.Model):
     player_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
+    player_room_id = models.DecimalField(max_digits=20, decimal_places=0)
     user = models.ForeignKey(User, related_name='player_user', on_delete=models.CASCADE)
     role = models.ForeignKey(Role, related_name='player_role', on_delete=models.SET_NULL, null=True)
     room = models.ForeignKey(Room, related_name='player_room', on_delete=models.CASCADE)
@@ -117,8 +120,8 @@ class Player(models.Model):
     
     def show_role_info(self):
         return {
-            'player_id': int(self.player_id), 'name': self.user.name,
-            'role_id': int(self.role_id), 'role_name': self.role.role_name,
+            'player_id': int(self.player_id), 'player_id_in_room': int(self.player_room_id), 'name': self.user.name,
+            'role_id': int(self.role_id), 'role_id_in_script': int(self.role.role_script_id), 'role_name': self.role.role_name,
             'background': self.role.background, 'timeline': self.role.timeline,
             'task': self.role.task, 'is_murder': self.role.is_murder
         }
@@ -131,6 +134,8 @@ class Clue(models.Model):
     clue_description = models.CharField(max_length=5000)
     text = models.CharField(max_length=50)
 
+    clue_script_id = models.DecimalField(max_digits=20, decimal_places=0)
+
     player_list = models.ManyToManyField(Player, through='PlayerClue')
 
     class Meta:
@@ -140,7 +145,9 @@ class Clue(models.Model):
         return {
             'text': self.text,
             'clue_id': int(self.clue_id),
+            'clue_id_in_script': int(self.clue_script_id),
             'role_id': int(self.role.role_id),
+            'role_id_in_script': int(self.role.role_script_id),
             'description': self.clue_description
         }
 
