@@ -95,6 +95,7 @@
         clue_list: [
             {
                 text: str
+                role_name: str
                 clue_description: str
             },
             ...
@@ -125,6 +126,7 @@
             }
             ...
         ]
+        master_name: str (or null)
         start: bool
     }
     ```
@@ -146,6 +148,7 @@
             }
             ...
         ]
+        master_name: str (or null)
         start: bool
     }
     ```
@@ -262,6 +265,7 @@
             player_id: int
             name: str (username)
             message: str
+            send_time: time
         }
         ...
     ]

@@ -98,4 +98,4 @@ insert into User (_id, name, password, email, register_date, group_id, friend_nu
 insert into User (_id, name, password, email, register_date, group_id, friend_num) values (97, 'Abernathy', 'psAbernathywd', 'abernathy@pku.edu.cn', localtimestamp(), 0, 0);
 insert into User (_id, name, password, email, register_date, group_id, friend_num) values (98, 'Abraham', 'psAbrahamwd', 'abraham@pku.edu.cn', localtimestamp(), 0, 0);
 insert into User (_id, name, password, email, register_date, group_id, friend_num) values (99, 'Hayes', 'psHayeswd', 'hayes@pku.edu.cn', localtimestamp(), 0, 0);
-insert into User (_id, name, password, email, register_date, group_id, friend_num) values (100, '管理员', 'psManagerwd', 'manager@pku.edu.cn', localtimestamp(), 1, 0);
+insert into User (_id, name, password, email, register_date, group_id, friend_num) values (100, 'çŽĄçĺ', 'psManagerwd', 'manager@pku.edu.cn', localtimestamp(), 1, 0);

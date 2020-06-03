@@ -38,6 +38,7 @@ def register_handler(request):
     if request.method == 'POST':
         response = {}
         error = None
+        print(request.body)
         req = json.loads(request.body)
         username = req['username']
         password = req['password']
@@ -185,6 +186,8 @@ def delete_friend_request(request):
         user_to_be_delete = models.User.objects.filter(name=user_to_be_delete_name).first()
         if not user_to_be_delete:
             error = 'No such user'
+        elif user_to_be_delete not in user.get_friend_list():
+            error = user_to_be_delete_name + ' is not the friend of ' + username
         else:
             user.friend_list.remove(user_to_be_delete)
             user_to_be_delete.friend_list.remove(user)
@@ -231,7 +234,7 @@ def init_room(request):
             script_title = [sc.title for sc in script]
             response['error_code'] = 0
             data = {
-                "room_id": room_id,
+                "room_id": int(room_id),
                 "script_to_select": script_title
             }
             response['data'] = data
@@ -260,6 +263,7 @@ def upsend_script(request):
         ]
         clue_list: [
             {
+                role_name: string
                 text: string
                 clue_description: string
             },
@@ -286,10 +290,16 @@ def upsend_script(request):
         clue_info = req['clue_list']
         player_num = len(role_info)
 
+        role_name_dict = {rl['name']:0 for rl in role_info}
+
         if len(role_info) < 2:
             error = 'at least 2 roles(players) in a script'
         elif models.Script.objects.filter(title=title):
             error = 'script title ' + title + ' has already existed, please set another title'
+        elif len(role_name_dict) != len(role_info):
+            error = 'each role name is unique within a script'
+        elif any([cl['role_name'] not in role_name_dict for cl in clue_info]):
+            error = 'the corresponding role of a clue must exist in this script'
         else:
             ##=== update script ===##
             sc_id = 0
@@ -323,14 +333,18 @@ def upsend_script(request):
                 while clue:
                     cl_id += 1
                     clue = models.Clue.objects.filter(clue_id=cl_id).first()
+                corresponding_role = models.Role.objects.get(role_name=cl_info['role_name'], script=script)
                 clue = models.Clue.objects.create(clue_id=cl_id, script=script, text=cl_info['text'],
-                                                  clue_description=cl_info['clue_description'])
+                                                  role=corresponding_role, clue_description=cl_info['clue_description'])
                 cl_id += 1
 
         if error is None:
             sc = models.Script.objects.filter(script_id=sc_id).first()
             data = sc.show_script_info()
             response['data'] = data
+        else:
+            response['error_code'] = 1
+            response['msg'] = error
         return JsonResponse(response)
 
 
@@ -349,6 +363,7 @@ def enter_room(request):
             }
             ...
         ]
+        master_name: str
         start: bool
     }
     """
@@ -387,7 +402,17 @@ def enter_room(request):
                     error = username + ' has already entered a room, please exit first'
 
             player_list = models.Player.objects.filter(room_id=room_id)        
-            player_name_list = [{'id':player.player_id, 'name':player.user.name} for player in player_list]
+            player_name_list = [{'id':int(player.player_id), 'name':player.user.name} for player in player_list]
+
+            master_name = None
+            master_list = [player for player in player_list if player.is_master]
+            if len(player_list) == room.size and len(master_list) == 0:
+                master = player_list[0]
+                master.is_master = 1
+                master.save()
+                master_list.append(master)
+            if len(master_list) > 0:
+                master_name = master_list[0].user.name
 
             start = False
             if room.stage == 1:
@@ -397,6 +422,7 @@ def enter_room(request):
             response['error_code'] = 0
             data = {
                 "player_list": player_name_list,
+                "master_name": master_name,
                 "start": start
             }
             response['data'] = data
@@ -422,6 +448,7 @@ def exit_room(request):
             }
             ...
         ]
+        master_name: str
         start: bool
     }
     """
@@ -445,6 +472,9 @@ def exit_room(request):
         
             if not this_player:
                 error = username + ' is not in this room'
+            elif this_player.is_master != is_master:
+                error = username + ' is not the master ' if is_master else username + ' is the master'
+                is_master = this_player.is_master
             elif is_master and len(player_list) > 1:
                 if 'next_master_name' not in req:
                     error = 'there exists other player(s) in this room, please select one to be master'
@@ -470,11 +500,21 @@ def exit_room(request):
                     next_player.is_master = 1
                     next_player.save()
                 player_list = models.Player.objects.filter(room_id=room_id)
-                room.stage, room.script = 0, None
+
+            master_name = None
+            master_list = [player for player in player_list if player.is_master]
+            if len(master_list) > 0:
+                master_name = master_list[0].user.name
+                room.stage = 0
                 room.save()
+                for player in player_list:
+                    player.ready_status = 0
+                    player.save()
+            
             response['error_code'] = 0
             data = {
-                "player_list": [{'id':player.player_id, 'name':player.user.name} for player in player_list],
+                "player_list": [{'id':int(player.player_id), 'name':player.user.name} for player in player_list],
+                "master_name": master_name,
                 "start": False
             }
             response['data'] = data
@@ -509,7 +549,7 @@ def room_owner_choose_script(request):
                 error = 'the room size is ' + str(room.size) + ', please choose a right script'
         
         if error is None:
-            room.script = script
+            room.script, room.stage = script, 0
             room.save()
             response['error_code'] = 0
         else:
@@ -543,6 +583,7 @@ def start_game(request):
             {
                 text: string
                 clue_id: int
+                role_id: int
                 description: string
             }
             ...
@@ -558,6 +599,8 @@ def start_game(request):
         
         if not room:
             error = 'no such room'
+        elif not room.script:
+            error = 'please choose a script first'
         else:
             script = room.script
             role_list = models.Role.objects.filter(script_id=script.script_id)
@@ -568,6 +611,7 @@ def start_game(request):
                 error = 'not enough players here'
             else:
                 ##=== assign roles ===##
+                role_list = [rl for rl in role_list]
                 random.shuffle(role_list)
                 for player, role in zip(player_list, role_list):
                     player.role = role
@@ -579,6 +623,7 @@ def start_game(request):
                 player_list = models.Player.objects.filter(room=room)
                 role_info = [player.show_role_info() for player in player_list]
 
+                clue_list = models.Clue.objects.filter(script_id=script.script_id)
                 clue_info = [clue.show_clue() for clue in clue_list]
         
         if error is None:
@@ -587,7 +632,7 @@ def start_game(request):
             room.save()
             data = {
                 'script_title': script.title,
-                'murder_id': script.murder_id,
+                'murder_id': int(script.murder_id),
                 'role_info': role_info,
                 'clue_info': clue_info
             }
@@ -614,6 +659,7 @@ def check_clue(request):
         clue_info: {
             text: string
             clue_id: int
+            role_id: int
             description: string
         }
     }
@@ -646,7 +692,7 @@ def check_clue(request):
 
         if error is None:
             data = {
-                'clue_owner': {'player_id': find_player.player_id, 'role': role.role_name},
+                'clue_owner': {'player_id': int(find_player.player_id), 'role': role.role_name},
                 'clue_info': find_clue.show_clue()
             }
             response['error_num'] = 0
@@ -702,11 +748,11 @@ def refresh_clue(request):
                     is_open = 0
                 else:
                     owner_list = [
-                        {'role_id': pc.player.role_id, 'player_id': pc.player_id} for pc in player_clue
+                        {'role_id': int(pc.player.role_id), 'player_id': int(pc.player_id)} for pc in player_clue
                     ]
                     is_open = player_clue[0].is_public
                 cur_data = {
-                    "clue_id": clue.clue_id,
+                    "clue_id": int(clue.clue_id),
                     "owner_list": owner_list,
                     "open": is_open
                 }
@@ -727,8 +773,9 @@ def public_clue(request):
         clue_id: int
     }
     Output['data']: {
-        clue_id: int
         text: string
+        clue_id: int
+        role_id: int        
         description: string
     }
     """
@@ -741,7 +788,7 @@ def public_clue(request):
         clue_id = req['clue_id']
 
         # check if clue id is correct
-        find_clue = models.Clue.objects.filter(clue_id = clue_id)
+        find_clue = models.Clue.objects.filter(clue_id=clue_id)
         if not find_clue:
             error = 'No such clue'
         else:
@@ -753,7 +800,7 @@ def public_clue(request):
         
         if error is None:
             response['error_num'] = 0
-            response['data'] = cur_player_clue[0].show_clue()
+            response['data'] = cur_player_clue[0].clue.show_clue()
         else:
             response['error_num'] = 1
             response['msg'] = error
@@ -772,6 +819,7 @@ def send_msg(request):
             player_id: int
             name: string (username)
             message: string
+            send_time: time
         }
         ...
     ]
@@ -800,11 +848,14 @@ def send_msg(request):
                 dlg_id += 1
                 dialogue = models.Dialogue.objects.filter(dialogue_id=dlg_id)
             dialogue = models.Dialogue.objects.create(dialogue_id=dlg_id, content=message, 
-                                                      room=room, player=player)
+                                                      room=room, player=player, send_time=now())
         
         if error is None:
             messages = models.Dialogue.objects.filter(room_id=room_id)
-            messages = [{'player_id':msg.player_id, 'name': msg.player.user.name, 'message':msg.content} for msg in messages]
+            messages = [
+                {'player_id':int(msg.player_id), 'name': msg.player.user.name, 
+                 'message':msg.content, 'send_time': msg.send_time} for msg in messages
+            ]
             response['error_num'] = 0
             response['data'] = messages
         else:

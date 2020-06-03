@@ -57,7 +57,7 @@ class Script(models.Model):
             'player_num number': self.player_num,
             'truth': self.truth,
             'description': self.description,
-            'murder': self.murder_id
+            'murder': int(self.murder_id)
         }
         return script_info
 
@@ -89,7 +89,7 @@ class Role(models.Model):
 
     def show_info(self, level):
         info = {
-            'script id': self.script_id,
+            'script id': int(self.script_id),
             'role description': self.role_description
         }
         if level == 'self':
@@ -117,8 +117,8 @@ class Player(models.Model):
     
     def show_role_info(self):
         return {
-            'player_id': self.player_id, 'name': self.user.name,
-            'role_id': self.role_id, 'role_name': self.role.role_name,
+            'player_id': int(self.player_id), 'name': self.user.name,
+            'role_id': int(self.role_id), 'role_name': self.role.role_name,
             'background': self.role.background, 'timeline': self.role.timeline,
             'task': self.role.task, 'is_murder': self.role.is_murder
         }
@@ -127,6 +127,7 @@ class Player(models.Model):
 class Clue(models.Model):
     clue_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
     script = models.ForeignKey(Script, related_name='clue_script', on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, related_name='clue_role', on_delete=models.CASCADE)
     clue_description = models.CharField(max_length=5000)
     text = models.CharField(max_length=50)
 
@@ -138,7 +139,8 @@ class Clue(models.Model):
     def show_clue(self):
         return {
             'text': self.text,
-            'clue_id': self.clue_id,
+            'clue_id': int(self.clue_id),
+            'role_id': int(self.role.role_id),
             'description': self.clue_description
         }
 
@@ -159,6 +161,8 @@ class Dialogue(models.Model):
 
     room = models.ForeignKey(Room, related_name='dialogue_room', on_delete=models.CASCADE)
     player = models.ForeignKey(Player, related_name='dialogue_player', on_delete=models.SET_NULL, null=True)
+
+    send_time = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'Dialogue'
