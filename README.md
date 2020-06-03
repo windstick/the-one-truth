@@ -125,6 +125,7 @@
         is_master: int
     }
     Output['data']: {
+        room_size: int
         player_list: [
             {
                 id: int (player_id)
@@ -178,7 +179,11 @@
     }
     Output['data']: {
         script_title: str
-        murder_id: int (role_id)
+        murder: {
+            role_id: int
+            role_id_in_script: int
+            role_name: str
+        }
         role_info: [
             {
                 player_id: int
