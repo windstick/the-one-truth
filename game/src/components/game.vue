@@ -86,6 +86,7 @@ export default {
       scriptid:1,
       player:1,
       room_id:0,
+      ready_tag:0,
       script_title:'s',
       role_info:[{'1':1}],
       clue_info:[{'1':1}],
@@ -137,15 +138,15 @@ export default {
   },
   methods:{
     myready:function(){
-       /*
+       
        this.axios({
         method: 'post',
         url: '/synchronize/',
         data:{
  
         room_id:this.room_id,
-        player_id:1
-       
+        player_id:this.player_id,
+        ready_tag:this.ready_tag
         }
       })
       .then(response => (
@@ -153,11 +154,12 @@ export default {
         this.player_num=response.data.data.player_num,
         this.ready_player_num=response.data.data.ready_player_num
         ));
-      */
-       this.count=this.count+1;
-       //if(this.player_num==this.ready_player_num){
-       if(this.count>0){
-         this.count=0;
+      
+       //this.count=this.count+1;
+       if(this.player_num==this.ready_player_num){
+      //if(this.count>0){
+         //this.count=0;
+         this.ready_tag=0;
          this.light[this.stage]=1;
          this.dark[this.stage]=0;
          this.stage=this.stage+1;
