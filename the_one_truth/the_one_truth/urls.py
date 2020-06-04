@@ -32,6 +32,8 @@ urlpatterns = [
     ##=== script operations ===##
     path('upsend_script/',bv.upsend_script),
     ##=== room operations ===##
+    path('get_room_master/', bv.get_room_master),
+    path('get_user_room/', bv.get_user_room),
     path('init_room/',bv.init_room),
     path('enter_room/',bv.enter_room),
     path('exit_room/',bv.exit_room),

@@ -9,7 +9,7 @@ class User(models.Model):
     register_date = models.DateTimeField(auto_now=True)
     last_login_time = models.DateTimeField(auto_now=True, null=True)
     group_id = models.IntegerField(default=0)
-    friend_list = models.ManyToManyField('self', symmetrical=True, null=True)
+    friend_list = models.ManyToManyField('self', symmetrical=True)
     friend_num = models.IntegerField(default=0)
     
     class Meta:
@@ -57,7 +57,7 @@ class Script(models.Model):
             'player_num number': self.player_num,
             'truth': self.truth,
             'description': self.description,
-            'murder': self.murder_id
+            'murder': int(self.murder_id)
         }
         return script_info
 
@@ -76,6 +76,8 @@ class Role(models.Model):
     role_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
     role_name = models.CharField(max_length=20, default='')
     script = models.ForeignKey(Script, related_name='role_script', on_delete=models.CASCADE)
+
+    role_script_id = models.DecimalField(max_digits=20, decimal_places=0)
     
     is_murder = models.IntegerField(default=0)
     task = models.CharField(max_length=200, default='')
@@ -89,7 +91,7 @@ class Role(models.Model):
 
     def show_info(self, level):
         info = {
-            'script id': self.script_id,
+            'script id': int(self.script_id),
             'role description': self.role_description
         }
         if level == 'self':
@@ -100,6 +102,7 @@ class Role(models.Model):
 
 class Player(models.Model):
     player_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
+    player_room_id = models.DecimalField(max_digits=20, decimal_places=0)
     user = models.ForeignKey(User, related_name='player_user', on_delete=models.CASCADE)
     role = models.ForeignKey(Role, related_name='player_role', on_delete=models.SET_NULL, null=True)
     room = models.ForeignKey(Room, related_name='player_room', on_delete=models.CASCADE)
@@ -117,8 +120,8 @@ class Player(models.Model):
     
     def show_role_info(self):
         return {
-            'player_id': self.player_id, 'name': self.user.name,
-            'role_id': self.role_id, 'role_name': self.role.role_name,
+            'player_id': int(self.player_id), 'player_id_in_room': int(self.player_room_id), 'name': self.user.name,
+            'role_id': int(self.role_id), 'role_id_in_script': int(self.role.role_script_id), 'role_name': self.role.role_name,
             'background': self.role.background, 'timeline': self.role.timeline,
             'task': self.role.task, 'is_murder': self.role.is_murder
         }
@@ -127,10 +130,13 @@ class Player(models.Model):
 class Clue(models.Model):
     clue_id = models.DecimalField(max_digits=20, decimal_places=0, primary_key=True)
     script = models.ForeignKey(Script, related_name='clue_script', on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, related_name='clue_role', on_delete=models.CASCADE)
     clue_description = models.CharField(max_length=5000)
     text = models.CharField(max_length=50)
 
-    player_list = models.ManyToManyField(Player, null=True, through='PlayerClue')
+    clue_script_id = models.DecimalField(max_digits=20, decimal_places=0)
+
+    player_list = models.ManyToManyField(Player, through='PlayerClue')
 
     class Meta:
         db_table = 'Clue'
@@ -138,7 +144,10 @@ class Clue(models.Model):
     def show_clue(self):
         return {
             'text': self.text,
-            'clue_id': self.clue_id,
+            'clue_id': int(self.clue_id),
+            'clue_id_in_script': int(self.clue_script_id),
+            'role_id': int(self.role.role_id),
+            'role_id_in_script': int(self.role.role_script_id),
             'description': self.clue_description
         }
 
@@ -159,6 +168,8 @@ class Dialogue(models.Model):
 
     room = models.ForeignKey(Room, related_name='dialogue_room', on_delete=models.CASCADE)
     player = models.ForeignKey(Player, related_name='dialogue_player', on_delete=models.SET_NULL, null=True)
+
+    send_time = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'Dialogue'

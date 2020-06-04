@@ -1,5 +1,40 @@
 ## The One Truth 剧本杀平台 (软件工程实习)
 
+#### 后端运行方式
+
+0. 环境要求
+
+    ```
+    python 3.6.8
+    Django 3.0.6
+    django-cors-headers 3.3.0
+    MySQL 8.0.20
+    ```
+
+1. 创建数据库
+
+    * 先在MySQL数据库中手动创建数据库：the_one_truth_database
+
+    * 定义数据库 tables
+
+        ```bash
+        cd the_one_truth/back_end
+        bash init_migration.sh
+        ```
+
+    * 批量导入用户数据：生成 sql 文件
+
+        ```bash
+        python generate_data.py user load_data.sql
+        ```
+
+2. 启动服务器
+
+    ```bash
+    cd the_one_truth
+    python manage.py runserver 0.0.0.0:8000
+    ```
+
 #### 服务器端接口说明
 
 1. ***register***：注册
@@ -66,11 +101,30 @@
 
     ```python
     Input: {
+        username: str
         num_person: int
     }
     Output['data']: {
         room_id: int
-        script_to_select: str[]
+        script_to_select: [
+            {
+                script_id: int
+                title: str
+                description: str
+            }
+            ...
+        ]
+        room_size: int
+        player_list: [
+            {
+                id: int (player_id)
+                id_in_room: int
+                name: str (username)
+            }
+            ...
+        ]
+        master_name: str (or null)
+        start: bool
     }
     ```
 
@@ -95,6 +149,7 @@
         clue_list: [
             {
                 text: str
+                role_name: str
                 clue_description: str
             },
             ...
@@ -115,16 +170,19 @@
     Input: {
         username: str
         room_id: int
-        is_master: int
     }
     Output['data']: {
+        room_size: int
+        script_id: int (or null)
         player_list: [
             {
                 id: int (player_id)
+                id_in_room: int
                 name: str (username)
             }
             ...
         ]
+        master_name: str (or null)
         start: bool
     }
     ```
@@ -135,17 +193,17 @@
     Input: {
         username: str
         room_id: int
-        is_master: int
-        next_master_name: str (PS: need to give only if is_master == 1)
     }
     Output['data']: {
         player_list: [
             {
                 id: int (player_id)
+                id_in_room: int
                 name: str (username)
             }
             ...
         ]
+        master_name: str (or null)
         start: bool
     }
     ```
@@ -167,12 +225,18 @@
     }
     Output['data']: {
         script_title: str
-        murder_id: int (role_id)
+        murder: {
+            role_id: int
+            role_id_in_script: int
+            role_name: str
+        }
         role_info: [
             {
                 player_id: int
+                player_id_in_room: int
                 name: str (username)
-                role_id: int
+                role_id: int,
+                role_id_in_script: int
                 role_name: str
                 background: str
                 timeline: str
@@ -185,6 +249,7 @@
             {
                 text: str
                 clue_id: int
+                clue_id_in_script: int
                 description: str
             }
             ...
@@ -203,11 +268,13 @@
     Output['data']: {
         clue_owner: {
             player_id: int
+            player_id_in_room: int
             role: str (role_name)
         }
         clue_info: {
             text: str
             clue_id: int
+            clue_id_in_script: int
             description: str
         }
     }
@@ -222,10 +289,13 @@
     Output['data']: [
         {
             clue_id: int
+            clue_id_in_script: int
             owner_list: [
                 {
                     role_id: int
+                    role_id_in_script: int
                     player_id: int
+                    player_id_in_room: int
                 }
                 ...
             ]
@@ -244,6 +314,7 @@
     }
     Output['data']: {
         clue_id: int
+        clue_id_in_script: int
         text: str
         description: str
     }
@@ -260,8 +331,10 @@
     Output['data']: [
         {
             player_id: int
+            player_id_in_room: int
             name: str (username)
             message: str
+            send_time: time
         }
         ...
     ]
@@ -284,4 +357,27 @@
         }
     }
     ```
-    
+
+17. ***get_user_room***：获取用户当前所在房间
+
+    ```python
+    Input: {
+        username: str
+    }
+    Output['data]: {
+        room_id: int (or null)
+    }
+    ```
+
+18. ***get_room_master***：获取房间房主信息
+
+    ```python
+    Input: {
+        room_id: int
+    }
+    Output['data']: {
+        id: int (player_id)
+        id_in_room: int
+        name: str (username)
+    }
+    ```
