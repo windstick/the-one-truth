@@ -245,12 +245,12 @@ export default {
         this.trueCriminal=response.data.data.murder.role_id,
         this.murder_name=response.data.data.murder.role_name,
         this.script_title=response.data.data.script_title,
-        this.background=response.data.data.role_info[0].background,
+        this.background=response.data.data.role_info[this.player].background,
         console.log(this.role_info),
         console.log(this.clue_info),
         //console.log(this.trueCriminal),
-        this.timeline=response.data.data.role_info[0].timeline,
-        this.task=response.data.data.role_info[0].task
+        this.timeline=response.data.data.role_info[this.player].timeline,
+        this.task=response.data.data.role_info[this.player].task
         ));
       console.log(1)
 
