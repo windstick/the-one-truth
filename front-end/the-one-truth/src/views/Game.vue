@@ -200,11 +200,13 @@ export default {
         console.log(error);
       });
       */
-     
-      this.scriptid=this.$route.query.script_id
-      this.player=this.$route.query.player
-      this.room_id=this.$route.query.room_id
       
+    this.scriptid=this.$route.query.script_id
+    this.player=this.$route.query.player
+    this.room_id=this.$route.query.room_id
+    console.log("current player " + this.player)
+
+    /*
     this.axios({
         method: 'post',
         url: '/room_owner_choose_script/',
@@ -222,25 +224,24 @@ export default {
       })
       .then(response => (
         console.log(response.data)
-        /*
+        
         this.role_info=response.data.role_info,
         this.clue_info=response.data.clue_info,
         this.trueCriminal=response.data.murder_id,
         this.script_title=response.data.script_title
-      */
-        ));
-       
+      
+        )); 
+    */
+
     this.axios({
         method: 'post',
         url: '/start_game/',
         data:{
- 
-        room_id:this.room_id,
-       
+          room_id:this.room_id,
         }
       })
-      .then(response => (
-        //console.log(response.data),
+      .then(response => {
+        console.log(response.data.data.role_info[0]),
         this.role_info=response.data.data.role_info,
         this.clue_info=response.data.data['clue_info'],
         this.trueCriminal=response.data.data.murder.role_id,
@@ -249,19 +250,20 @@ export default {
         this.background=response.data.data.role_info[this.player].background,
         // console.log(this.role_info),
         // console.log(this.clue_info),
-        //console.log(this.trueCriminal),
+        // console.log(this.trueCriminal),
         this.timeline=response.data.data.role_info[this.player].timeline,
         this.task=response.data.data.role_info[this.player].task
-        ));
-      console.log(1)
+
+        console.log(this.background)
+        }
+      );
+      // console.log(1)
 
 
       
   },
   created(){
-      
-      console.log(this.$route.query)
-      
+      // console.log(this.$route.query)
   }
 }
 </script>

@@ -192,7 +192,7 @@ export default {
           room_id: this.roomSession.room_id
         }
       }).then(msg => {
-        this.$router.push({path:'/home/room'})
+        // this.$router.push({path:'/home/room'})
         alert("exit success")
       })
     },

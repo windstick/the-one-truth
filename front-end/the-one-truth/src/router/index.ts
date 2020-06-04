@@ -28,8 +28,12 @@ const routes: Array<RouteConfig> = [
   {
     path: '/home',
     component: Home,
-    redirect: '/home/dashboard',
     children: [
+      {
+        path: '',
+        name: 'Home',
+        redirect: 'dashboard'
+      },
       {
         path: 'dashboard',
         component: Dashboard

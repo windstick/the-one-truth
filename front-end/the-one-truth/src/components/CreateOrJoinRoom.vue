@@ -54,7 +54,7 @@ export default {
         alert('Room id has to be an Integer');
 
     }
-  },
+  }/*,
   watch: {
     created(val, oldVal){
         if(this.created) {
@@ -62,7 +62,7 @@ export default {
           this.$router.replace('/home/room/selectscript');
         }
     }
-  }
+  }*/
 }
 </script>
 
