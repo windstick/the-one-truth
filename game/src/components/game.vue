@@ -145,7 +145,7 @@ export default {
         data:{
  
         room_id:this.room_id,
-        player_id:this.player_id,
+        player_id:this.role_info[this.player].player_id,
         ready_tag:this.ready_tag
         }
       })
@@ -183,7 +183,7 @@ export default {
         url: '/send_message/',
         data:{
           room_id:this.room_id,
-          player_id:this.player_id,
+          player_id:this.role_info[this.player].player_id,
           message:this.input
        
         }
