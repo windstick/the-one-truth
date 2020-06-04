@@ -457,6 +457,3 @@ npm run serve
 - 选取凶手
 - 查看真相
 
-
-
->>>>>>> master
