@@ -200,7 +200,6 @@ export default {
         console.log(error);
       });
       */
-      
     this.scriptid=this.$route.query.script_id
     this.player=this.$route.query.player
     this.room_id=this.$route.query.room_id
