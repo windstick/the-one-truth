@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>还没有登陆时显式的页</h1>
+    <h1>已经成功注销</h1>
   </div>
 </template>
 
@@ -11,8 +11,7 @@ export default {
   },
   beforeMount()
   {
-    if(this.$parent.User.logIn)
-      this.$router.replace('/home/room')
+    this.$store.commit("user/logOut")
   }
 }
 </script>

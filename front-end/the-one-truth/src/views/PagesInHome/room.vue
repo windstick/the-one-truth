@@ -6,7 +6,7 @@
           <div class="col-wrapper">
             <h1>好友列表</h1>
             <FriendTable :friend_list="User.friend_list"/>
-            <el-button @click="updateFriendList" style="margin-top:10px;"> update userlist </el-button>
+            <el-button @click="updateFriendList" style="margin-top:10px;"> 更新好友列表 </el-button>
           </div>
 
         </el-col>
@@ -33,7 +33,7 @@
               <el-table-column label="玩家身份" min-width="100" prop="id_in_room"/>
               <el-table-column label="用户名称" min-width="100" prop="name"/>
             </el-table>
-            <el-button @click="updatePlayerList" style="margin-top:10px;"> update playerlist </el-button>
+            <el-button @click="updatePlayerList" style="margin-top:10px;"> 更新玩家列表 </el-button>
           </div>
         </el-col>
       </el-row>

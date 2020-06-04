@@ -181,13 +181,12 @@ export default {
         url: '/send_message/',
         data:{
           room_id:this.room_id,
-          player_id:this.player_id,
+          player_id:this.role_info[this.player].player_id,
           message:this.input
-       
         }
       })
       .then(response => (
-        //console.log(response.data),
+        console.log(response.data),
         this.chat=response.data.data,
         this.input=''
         ));
@@ -201,6 +200,10 @@ export default {
         console.log(error);
       });
       */
+     
+      this.scriptid=this.$route.query.script_id
+      this.player=this.$route.query.player
+      this.room_id=this.$route.query.room_id
       
     this.axios({
         method: 'post',
@@ -243,12 +246,12 @@ export default {
         this.trueCriminal=response.data.data.murder.role_id,
         this.murder_name=response.data.data.murder.role_name,
         this.script_title=response.data.data.script_title,
-        this.background=response.data.data.role_info[0].background,
-        console.log(this.role_info),
-        console.log(this.clue_info),
+        this.background=response.data.data.role_info[this.player].background,
+        // console.log(this.role_info),
+        // console.log(this.clue_info),
         //console.log(this.trueCriminal),
-        this.timeline=response.data.data.role_info[0].timeline,
-        this.task=response.data.data.role_info[0].task
+        this.timeline=response.data.data.role_info[this.player].timeline,
+        this.task=response.data.data.role_info[this.player].task
         ));
       console.log(1)
 
@@ -258,9 +261,6 @@ export default {
   created(){
       
       console.log(this.$route.query)
-      this.scriptid=this.$route.query.script_id
-      this.player=this.$route.query.player
-      this.room_id=this.$route.query.room_id
       
   }
 }

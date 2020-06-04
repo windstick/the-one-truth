@@ -37,7 +37,7 @@ export default {
       if(Number.isInteger(this.roomSize) && this.roomSize > 0)
       {
         // 这里需要向后端请求的代码，获取roomid（这个任务交给room界面完成吧）
-        console.log(this.roomSize);
+        // console.log(this.roomSize);
         this.$emit('createRoom', this.roomSize)
       }
       else
@@ -58,7 +58,7 @@ export default {
   watch: {
     created(val, oldVal){
         if(this.created) {
-          console.log('room has been created')
+          // console.log('room has been created')
           this.$router.replace('/home/room/selectscript');
         }
     }

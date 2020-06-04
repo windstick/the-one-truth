@@ -1,14 +1,20 @@
 <template>
-  <div>
-    <h1>Profile page</h1>
-    <p>{{User.name}}</p>
+  <div style="text-align:center">
+    <h1>个人中心</h1>
+    <h2 style="text-align:center;">用户名称：{{User.name}}</h2>
+    <h2> 好友列表 </h2>
+    <div style="display:flex;flex: 0 0 auto;">
+      <FriendTable :friend_list="User.friend_list" style="width: 200px;"/>
+    </div>
   </div>
 </template>
 
 <script>
+import FriendTable from "@/components/FriendTable"
 export default {
   name: 'Profile',
   components: {
+    FriendTable
   },
   computed: {
       User() {

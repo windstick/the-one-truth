@@ -19,13 +19,16 @@ const mutations = {
     },
     logIn(state){
         state.login = true
+    },
+    logOut(state){
+        state.login = false
     }
 }
 
 
 const actions = {
     updateFriendListFromNetwork(context){
-        console.log(context.state.name)
+        // console.log(context.state.name)
         request({
             method: 'post',
             url: '/api/get_friends_list/',

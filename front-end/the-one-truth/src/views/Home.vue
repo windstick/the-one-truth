@@ -13,11 +13,29 @@
         </div>
       </router-link>
 
-      <router-link v-if="User.logIn" to="/home/profile">
+
+      <el-dropdown class="banner_item" trigger="click" v-if="User.logIn">
+        <div class="avatar-wrapper">
+          <div>用户</div>
+        </div>
+        <el-dropdown-menu slot="dropdown" class="user-dropdown">
+          <router-link to="/home/profile">
+            <el-dropdown-item>
+              个人中心
+            </el-dropdown-item>
+          </router-link>
+          <router-link to="/home/loggedout">
+            <el-dropdown-item>
+              注销
+            </el-dropdown-item>
+          </router-link>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <!---router-link v-if="User.logIn" to="/home/profile">
         <div class="banner_item">
           用户
         </div>
-      </router-link>
+      </router-link--->
       
       <router-link v-if="!User.logIn" to="/login">
         <div class="banner_item">登录</div>
