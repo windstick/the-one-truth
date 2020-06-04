@@ -1,5 +1,40 @@
 ## The One Truth 剧本杀平台 (软件工程实习)
 
+#### 后端运行方式
+
+0. 环境要求
+
+    ```
+    python 3.6.8
+    Django 3.0.6
+    django-cors-headers 3.3.0
+    MySQL 8.0.20
+    ```
+
+1. 创建数据库
+
+    * 先在MySQL数据库中手动创建数据库：the_one_truth_database
+
+    * 定义数据库 tables
+
+        ```bash
+        cd the_one_truth/back_end
+        bash init_migration.sh
+        ```
+
+    * 批量导入用户数据：生成 sql 文件
+
+        ```bash
+        python generate_data.py user load_data.sql
+        ```
+
+2. 启动服务器
+
+    ```bash
+    cd the_one_truth
+    python manage.py runserver 0.0.0.0:8000
+    ```
+
 #### 服务器端接口说明
 
 1. ***register***：注册
@@ -73,6 +108,7 @@
         room_id: int
         script_to_select: [
             {
+                script_id: int
                 title: str
                 description: str
             }
@@ -137,6 +173,7 @@
     }
     Output['data']: {
         room_size: int
+        script_id: int (or null)
         player_list: [
             {
                 id: int (player_id)

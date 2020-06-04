@@ -234,7 +234,6 @@ def get_room_master(request):
         return JsonResponse(response)
 
 
-
 def init_room(request):
     """
     Input: {
@@ -245,6 +244,7 @@ def init_room(request):
         room_id: int
         script_to_select: [
             {
+                script_id: int
                 title: string
                 description: string
             }
@@ -304,7 +304,7 @@ def init_room(request):
 
         if error is None:
             script = models.Script.objects.filter(player_num=num_person)
-            script_info = [{'title': sc.title, 'description': sc.description} for sc in script]
+            script_info = [{'script_id':sc.script_id, 'title': sc.title, 'description': sc.description} for sc in script]
             response['error_code'] = 0
             data = {
                 "room_id": int(room_id),
@@ -461,6 +461,7 @@ def enter_room(request):
         is_master: int
     }
     Output['data']: {
+        script_id: int (or null)
         player_list: [
             {
                 id: int (player_id)
@@ -487,7 +488,7 @@ def enter_room(request):
             error = 'no such room'
         else:
             player_list = models.Player.objects.filter(room_id=room_id)
-            if len(player_list) == room.size:
+            if len(player_list) == room.size and all([player.user != user for player in player_list]):
                 error = 'no seats left in this room'
             else:
                 player = models.Player.objects.filter(user_id=user._id).first()
@@ -526,6 +527,7 @@ def enter_room(request):
         if error is None:
             response['error_code'] = 0
             data = {
+                "script_id": int(room.script_id) if room.script else None,
                 "room_size":room.size,
                 "player_list": player_name_list,
                 "master_name": master_name,
@@ -701,11 +703,10 @@ def start_game(request):
                 error = 'not enough players here'
             else:
                 ##=== assign roles ===##
-                role_list = [rl for rl in role_list]
-                random.shuffle(role_list)
-                for player, role in zip(player_list, role_list):
-                    player.role = role
-                    player.save()
+                if any([not player.role for player in player_list]):
+                    for player, role in zip(player_list, role_list):
+                        player.role = role
+                        player.save()
 
                 truth = script.truth
                 murder_role = models.Role.objects.get(script=script, is_murder=1)
@@ -783,7 +784,7 @@ def check_clue(request):
 
         if error is None:
             data = {
-                'clue_owner': {'player_id': int(find_player.player_id), 'player_id_in_room':int(fine_player.player_room_id), 'role': role.role_name},
+                'clue_owner': {'player_id': int(find_player.player_id), 'player_id_in_room':int(find_player.player_room_id), 'role': role.role_name},
                 'clue_info': find_clue.show_clue()
             }
             response['error_num'] = 0
@@ -837,12 +838,11 @@ def refresh_clue(request):
                 if not player_clue:
                     owner_role_id = None
                     is_open = 0
-                else:
-                    owner_list = [
+                owner_list = [
                         {'role_id': int(pc.player.role_id), 'role_id_in_script': int(pc.player.role.role_script_id),
                          'player_id': int(pc.player_id), 'player_id_in_room':int(pc.player.player_room_id)} for pc in player_clue
-                    ]
-                    is_open = player_clue[0].is_public
+                ]
+                is_open = player_clue[0].is_public if player_clue else False
                 cur_data = {
                     "clue_id": int(clue.clue_id),
                     "owner_list": owner_list,
@@ -1012,3 +1012,4 @@ def synchronize(request):
             response['error_num'] = 1
             response['msg'] = error
         return JsonResponse(response)
+

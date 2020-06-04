@@ -19,62 +19,6 @@ def generate_for_user():
     return commands
 
 
-# def generate_for_script():
-#     title = ''
-#     description = ''
-#     truth = ''
-#     player_num = 5
-#     murder_id = 1
-
-#     role_id
-#     role_names = ['小锅', '小勺', '小盘', '小碗', '小筷']
-#     is_murders = [0, 1, 0, 0, 0]
-#     task = [
-#         '', 
-#         '',
-#         '',
-#         '',
-#         ''
-#     ]
-#     background = [
-#         '', 
-#         '',
-#         '',
-#         '',
-#         ''
-#     ]
-#     timeline = [
-#         '', 
-#         '',
-#         '',
-#         '',
-#         ''
-#     ]
-#     role_description = [
-#         '', 
-#         '',
-#         '',
-#         '',
-#         ''
-#     ]
-
-#     clue_id
-#     text = [
-#         '', 
-#         '',
-#         '',
-#         '',
-#         ''
-#     ]
-#     clue_description = [
-#         '', 
-#         '',
-#         '',
-#         '',
-#         ''
-#     ]
-
-
 if __name__ == '__main__':
     tag, filename = sys.argv[1], sys.argv[2]
     if tag == 'user':
